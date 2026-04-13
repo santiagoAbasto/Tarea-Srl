@@ -1,0 +1,852 @@
+.cards-4 {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.section--latest-news {
+    padding: 0px 0 80px;
+    border-top: 0;
+}
+
+.section--latest-news .section__header {
+    margin-bottom: 25px;
+}
+
+.section--latest-news .section__title {
+    color: #1A181C;
+    font-family: "Montserrat", sans-serif;
+    font-size: 32px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 120%;
+}
+
+.section--latest-news .section__button {
+    display: inline-flex;
+    height: 41px;
+    padding: 15px 20px;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    border: 1px solid #093E66;
+    color: #093E66;
+    text-align: center;
+    font-family: "Montserrat", sans-serif;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: normal;
+    letter-spacing: 0.32px;
+    text-transform: uppercase;
+}
+
+.cards-3--latest-news {
+    grid-template-columns: repeat(3, 392px);
+    gap: 24px;
+}
+
+.section--featured-products {
+    padding: 80px 0 82px;
+    border-top: 0;
+}
+
+.section--featured-products .section__header {
+    margin-bottom: 24px;
+}
+
+.section--featured-products .section__title {
+    color: #1A181C;
+    font-family: "Montserrat", sans-serif;
+    font-size: 32px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 120%;
+}
+
+.cards-4--featured-products {
+    grid-template-columns: repeat(4, 288px);
+    gap: 24px;
+}
+
+.news-card,
+.product-tile {
+    background: #fff;
+    border: 1px solid var(--border, #dce3ea);
+}
+
+.product-tile--link {
+    display: flex;
+    color: inherit;
+    text-decoration: none;
+}
+
+.section--latest-news .news-card {
+    width: 392px;
+    height: 488px;
+    background: #FFF;
+    border: 1px solid #D9D9D9;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.section--featured-products .product-tile {
+    width: 288px;
+    height: 392px;
+    border: 1px solid #D9D9D9;
+    background: #FFF;
+    transition: box-shadow 180ms ease;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.news-card__media {
+    aspect-ratio: 1.25 / 1;
+    overflow: hidden;
+    background: #dfe8ef;
+}
+
+.section--latest-news .news-card__media {
+    position: relative;
+    width: 392px;
+    height: 260px;
+    aspect-ratio: auto;
+}
+
+.section--latest-news .news-card__media::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0);
+    transition: background 180ms ease;
+    z-index: 1;
+    pointer-events: none;
+}
+
+.news-card__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.news-card__body,
+.product-tile__body {
+    padding: 14px 16px 18px;
+}
+
+.section--latest-news .news-card__body {
+    height: 228px;
+    flex: 0 0 228px;
+    padding: 20px 30px 13px 23px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.eyebrow {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    color: #8BCFDE;
+    margin-bottom: 10px;
+}
+
+.eyebrow--news {
+    --eyebrow-color: #1d5a92;
+}
+
+.section--latest-news .eyebrow--news {
+    color: #093E66;
+    width: 339px;
+    margin-bottom: 10px;
+    font-family: "Montserrat", sans-serif;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 150%;
+    letter-spacing: 0;
+    text-transform: none;
+}
+
+.section--latest-news .news-card__body h3 {
+    width: 339px;
+    margin: 0 0 37px;
+    color: #353C47;
+    font-family: "Montserrat", sans-serif;
+    font-size: 24px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 120%;
+}
+
+.section--latest-news .news-card__body p {
+    width: 339px;
+    margin: 0 0 7px;
+    color: #000;
+    font-family: "Montserrat", sans-serif;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 150%;
+}
+
+.section--latest-news .news-card__more {
+    display: inline-flex;
+    width: 339px;
+    height: 43px;
+    padding: 10px 10px 10px 0;
+    margin-top: auto;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-start;
+    color: rgba(0, 0, 0, 0.57);
+    font-family: "Montserrat", sans-serif;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 150%;
+    text-decoration: none;
+}
+
+.section--latest-news .news-card:hover .news-card__media::before,
+.section--latest-news .news-card__media:hover::before {
+    background: rgba(0, 0, 0, 0.18);
+}
+
+.section--latest-news .carousel-dots--news {
+    width: 148px;
+    height: 6px;
+    margin: 34px auto 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8.1319px;
+}
+
+.section--latest-news .carousel-dots--news button {
+    display: block;
+    width: 43.912px;
+    height: 6px;
+    background: #CCCCCC;
+    opacity: 0.3;
+    border-radius: 0;
+    border: 0;
+    padding: 0;
+    cursor: pointer;
+}
+
+.section--latest-news .carousel-dots--news button.is-active {
+    opacity: 1;
+}
+
+.product-tile__media {
+    aspect-ratio: 1 / 1;
+    display: grid;
+    place-items: center;
+    padding: 20px;
+    background: #fff;
+}
+
+.section--featured-products .product-tile__media {
+    width: 100%;
+    height: 288px;
+    padding: 0;
+    position: relative;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+}
+
+.section--featured-products .product-tile__media::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(9, 62, 102, 0);
+    transition: background 180ms ease;
+    z-index: 1;
+}
+
+.section--featured-products .product-tile__plus {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 2px;
+    height: 18px;
+    background: #FFF;
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.9);
+    transition: opacity 180ms ease, transform 180ms ease;
+    z-index: 3;
+}
+
+.product-tile__media img {
+    max-height: 180px;
+    object-fit: contain;
+}
+
+.section--featured-products .product-tile__media img {
+    width: 100%;
+    height: 100%;
+    max-width: 288px;
+    max-height: 288px;
+    object-fit: contain;
+    object-position: center;
+    transition: none;
+    z-index: 0;
+    display: block;
+}
+
+.section--featured-products .product-tile__media::before,
+.section--featured-products .product-tile__media::after,
+.section--featured-products .product-tile__plus {
+    pointer-events: none;
+}
+
+.section--featured-products .product-tile__media::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 18px;
+    height: 2px;
+    background: #FFF;
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.9);
+    transition: opacity 180ms ease, transform 180ms ease;
+    z-index: 3;
+}
+
+.featured-product__name {
+    margin: 0;
+    font-size: 17px;
+    line-height: 1.3;
+    font-weight: 500;
+}
+
+.section--featured-products .product-tile__body {
+    position: relative;
+    height: 104px;
+    flex: 0 0 104px;
+    padding: 0 24px 15px;
+    width: 100%;
+    overflow: visible;
+}
+
+.section--featured-products .product-tile__body::before {
+    content: "";
+    position: absolute;
+    left: 24px;
+    top: 0;
+    width: 240px;
+    height: 1px;
+    background: #DBDADA;
+}
+
+.section--featured-products .eyebrow {
+    width: 240px;
+    height: 45px;
+    margin-bottom: 0;
+    color: #8BCFDE;
+    font-family: "Montserrat", sans-serif;
+    font-size: 11px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 45px;
+    text-transform: uppercase;
+    letter-spacing: 0;
+    min-height: 45px;
+}
+
+.section--featured-products .eyebrow--chain {
+    color: #8BCFDE;
+    font-family: "Montserrat", sans-serif;
+    font-size: 11px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 45px;
+    text-transform: uppercase;
+}
+
+.section--featured-products .eyebrow--preassembled {
+    color: #52B6AC;
+    font-family: "Montserrat", sans-serif;
+    font-size: 11px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 45px;
+    text-transform: uppercase;
+}
+
+.section--featured-products .eyebrow--rienda {
+    color: #E86428;
+    font-family: "Montserrat", sans-serif;
+    font-size: 11px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 45px;
+    text-transform: uppercase;
+}
+
+.section--featured-products .eyebrow--compact {
+    color: #9DC66C;
+    font-family: "Montserrat", sans-serif;
+    font-size: 11px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 45px;
+    text-transform: uppercase;
+}
+
+.section--featured-products .eyebrow--insulators {
+    color: #E85556;
+    font-family: "Montserrat", sans-serif;
+    font-size: 11px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 45px;
+    letter-spacing: -0.55px;
+    text-transform: uppercase;
+}
+
+.section--featured-products .featured-product__name {
+    width: 240px;
+    height: 44px;
+    color: #1A181C;
+    font-family: "Montserrat", sans-serif;
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+}
+
+.section--featured-products .eyebrow--pat {
+    width: 240px;
+    height: 45px;
+    color: #A46DA9;
+    font-family: "Montserrat", sans-serif;
+    font-size: 11px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 45px;
+    letter-spacing: -0.44px;
+    text-transform: uppercase;
+    min-height: 45px;
+}
+
+.section--featured-products .featured-product__name--pat {
+    width: 240px;
+    height: 44px;
+    color: #1A181C;
+    font-family: "Montserrat", sans-serif;
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+}
+
+.section--featured-products .product-tile:hover {
+    box-shadow: 0 16px 40px rgba(9, 62, 102, 0.12);
+}
+
+.section--featured-products .product-tile:hover .product-tile__media::before {
+    background: rgba(9, 62, 102, 0.28);
+}
+
+.section--featured-products .product-tile:hover .product-tile__media::after,
+.section--featured-products .product-tile:hover .product-tile__plus {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+}
+
+.news-card__body h3 {
+    margin: 0 0 14px;
+    font-size: 18px;
+    line-height: 1.2;
+}
+
+.section--latest-news .news-card__body h3 {
+    margin: 0 0 14px;
+}
+
+.news-card__body p {
+    margin: 0 0 12px;
+    color: var(--muted, #5b6673);
+    line-height: 1.45;
+}
+
+.news-card__more {
+    color: #9aa5b1;
+    font-size: 14px;
+}
+
+.carousel-dots {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 18px;
+}
+
+.carousel-dots span {
+    width: 32px;
+    height: 4px;
+    background: #d7dce2;
+}
+
+.carousel-dots span.is-active {
+    background: #b7bdc5;
+}
+
+.section--trusted-clients {
+    width: 100%;
+    min-height: 314px;
+    padding: 0;
+    border-top: 0;
+    background: rgba(9, 62, 102, 0.05);
+}
+
+.section--trusted-clients .container {
+    padding-top: 44px;
+    padding-bottom: 40px;
+}
+
+.section--trusted-clients--without-dots .container {
+    padding-bottom: 0;
+}
+
+.section--trusted-clients .section__header {
+    margin-bottom: 25px;
+}
+
+.section--trusted-clients .section__title {
+    color: #1A181C;
+    font-family: "Montserrat", sans-serif;
+    font-size: 32px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 120%;
+}
+
+.section--trusted-clients .section__button {
+    display: inline-flex;
+    height: 41px;
+    padding: 15px 20px;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    border: 1px solid #093E66;
+    color: #093E66;
+    text-align: center;
+    font-family: "Montserrat", sans-serif;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: normal;
+    letter-spacing: 0.32px;
+    text-transform: uppercase;
+}
+
+@media (max-width: 900px) {
+    .cards-4,
+    .about-block {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ================================================================
+   CARDS / NEWS / FEATURED / CLIENTS — MOBILE (max-width: 768px)
+   NO modifica ningún estilo desktop.
+================================================================ */
+
+@media (max-width: 768px) {
+
+    /* ── Sección Productos Destacados ── */
+    .section--featured-products {
+        padding: 40px 0;
+    }
+
+    .section--featured-products .section__title {
+        font-size: 20px;
+    }
+
+    /* 2 columnas en mobile para featured products */
+    .cards-4--featured-products {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+
+    .section--featured-products .product-tile {
+        width: 100%;
+        height: auto;
+    }
+
+    .section--featured-products .product-tile__media {
+        width: 100%;
+        height: auto;
+        aspect-ratio: 1 / 1;
+    }
+
+    .section--featured-products .product-tile__body {
+        height: auto;
+        min-height: 80px;
+        flex: unset;
+        padding: 0 14px 14px;
+    }
+
+    /* Línea divisoria adaptada al ancho del card */
+    .section--featured-products .product-tile__body::before {
+        left: 14px;
+        width: calc(100% - 28px);
+    }
+
+    .section--featured-products .eyebrow {
+        width: 100%;
+        height: auto;
+        min-height: unset;
+        font-size: 10px;
+        line-height: 1.5;
+        padding-top: 8px;
+        letter-spacing: 0.02em;
+    }
+
+    .section--featured-products .featured-product__name,
+    .section--featured-products .featured-product__name--pat {
+        width: 100%;
+        height: auto;
+        font-size: 13px;
+        line-height: 1.3;
+    }
+
+    /* ── Sección Novedades ── */
+    .section--latest-news {
+        padding: 40px 0 48px;
+    }
+
+    .section--latest-news .section__title {
+        font-size: 20px;
+    }
+
+    .section--latest-news .section__button {
+        height: auto;
+        min-height: 44px;
+        font-size: 13px;
+        padding: 10px 16px;
+    }
+
+    .section--latest-news .news-card {
+        width: 100%;
+        height: auto;
+    }
+
+    /* Media con aspect-ratio fluido */
+    .section--latest-news .news-card__media {
+        width: 100%;
+        height: auto;
+        aspect-ratio: 3 / 2;
+    }
+
+    /* Body: ancho libre, sin overflow */
+    .section--latest-news .news-card__body {
+        height: auto;
+        flex: unset;
+        padding: 18px 20px 16px;
+    }
+
+    .section--latest-news .eyebrow--news {
+        width: 100%;
+        font-size: 12px;
+        margin-bottom: 8px;
+    }
+
+    .section--latest-news .news-card__body h3 {
+        width: 100%;
+        font-size: 18px;
+        margin-bottom: 12px;
+    }
+
+    .section--latest-news .news-card__body p {
+        width: 100%;
+        font-size: 14px;
+        line-height: 1.5;
+        margin-bottom: 8px;
+    }
+
+    .section--latest-news .news-card__more {
+        width: 100%;
+        height: auto;
+        padding: 10px 0;
+        font-size: 14px;
+    }
+
+    /* ── Sección Clientes ── */
+    .section--trusted-clients .container {
+        padding-top: 36px;
+        padding-bottom: 32px;
+    }
+
+    .section--trusted-clients .section__title {
+        font-size: 20px;
+    }
+
+    .section--trusted-clients .section__button {
+        height: auto;
+        min-height: 44px;
+        font-size: 13px;
+        padding: 10px 16px;
+    }
+
+    /* 3 columnas en mobile para logos de clientes */
+    .cards-4--clients {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+    }
+
+    .client-logo-card {
+        width: 100%;
+        height: auto;
+        aspect-ratio: 3 / 2;
+        padding: 10px;
+    }
+
+    .client-logo-card__image {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+    }
+}
+
+.cards-4--clients {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 24px;
+}
+
+.clients-carousel__page {
+    display: none;
+}
+
+.clients-carousel__page.is-active {
+    display: grid;
+}
+
+.client-logo-card {
+    background: #fff;
+    border: 1px solid var(--border, #dce3ea);
+    width: 184px;
+    height: 120px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.client-logo-card__image {
+    width: calc(184px - 36px);
+    height: calc(120px - 36px);
+    object-fit: contain;
+    object-position: center;
+    display: block;
+    filter: grayscale(1);
+    transition: filter 180ms ease;
+}
+
+.client-logo-card:hover .client-logo-card__image {
+    filter: grayscale(0);
+}
+
+.section--trusted-clients .carousel-dots--clients {
+    width: 148px;
+    height: 6px;
+    margin: 34px auto 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8.1319px;
+}
+
+.section--trusted-clients .carousel-dots--clients button {
+    display: block;
+    width: 43.912px;
+    height: 6px;
+    background: #CCCCCC;
+    opacity: 0.3;
+    border: 0;
+    padding: 0;
+    border-radius: 0;
+    cursor: pointer;
+}
+
+.section--trusted-clients .carousel-dots--clients button.is-active {
+    opacity: 1;
+}
+
+/* ================================================================
+   OVERRIDE MOBILE — al final del archivo para ganar la cascada
+   sobre los globales .cards-4--clients, .client-logo-card, etc.
+   que están definidos después del primer bloque @media(768px).
+================================================================ */
+
+@media (max-width: 768px) {
+
+    /* ── Clientes: 3 columnas (override del repeat(6,...) global) ── */
+    .cards-4--clients {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+    }
+
+    .client-logo-card {
+        width: 100%;
+        height: auto;
+        aspect-ratio: 3 / 2;
+        padding: 10px;
+        box-sizing: border-box;
+    }
+
+    .client-logo-card__image {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        object-position: center;
+    }
+
+    /* ── Novedades: colapsar grid a 1 columna ──
+       .cards-3--latest-news { repeat(3, 392px) } es global en home-cards.css
+       y viene DESPUÉS de la regla @media(900px) de home-products.css.
+       Este bloque final es el único punto de la cascada que puede ganarle. */
+    .cards-3--latest-news {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    /* ── Novedades: override del ancho fijo 392px ── */
+    .section--latest-news .news-card {
+        width: 100%;
+        max-width: 100%;
+        height: auto;
+    }
+
+    .section--latest-news .news-card__media {
+        width: 100%;
+        height: auto;
+        aspect-ratio: 3 / 2;
+    }
+
+    .section--latest-news .news-card__body {
+        height: auto;
+        flex: unset;
+    }
+
+    .section--latest-news .eyebrow--news,
+    .section--latest-news .news-card__body h3,
+    .section--latest-news .news-card__body p,
+    .section--latest-news .news-card__more {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .section--latest-news .news-card__body h3 {
+        margin-bottom: 10px;
+    }
+}

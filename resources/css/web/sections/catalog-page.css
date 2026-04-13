@@ -1,0 +1,243 @@
+.catalog-page-hero {
+    height: 350px;
+    min-height: 350px;
+}
+
+.catalog-page-hero .page-hero__content {
+    height: 100%;
+    box-sizing: border-box;
+    padding-top: 90px;
+    padding-bottom: 64px;
+}
+
+.catalog-page-hero .page-hero__overlay {
+    background:
+        linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.4) 100%),
+        rgba(0, 0, 0, 0.65) !important;
+}
+
+.catalog-page {
+    padding: 0;
+    background: #FFF;
+    box-sizing: border-box;
+}
+
+.catalog-page__notice {
+    margin: 0 auto 24px;
+    width: calc(1224px - 208px);
+    max-width: 100%;
+    padding: 16px 20px;
+    border: 1px solid #CDE3F0;
+    background: #F4FAFD;
+    color: #093E66;
+    font-family: "Montserrat", sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 150%;
+    box-sizing: border-box;
+}
+
+.catalog-page__notice--error {
+    border-color: #E8B7B8;
+    background: #FFF4F4;
+    color: #8C2F39;
+}
+
+.catalog-page__form {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+.catalog-page__content {
+    width: 1224px;
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 80px 104px 71.53px;
+    box-sizing: border-box;
+}
+
+.catalog-page__content h2 {
+    margin: 0 0 24px;
+    color: #1A181C;
+    font-family: "Montserrat", sans-serif;
+    font-size: 32px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 120%;
+}
+
+.catalog-page__grid {
+    display: grid;
+    grid-template-columns: 391.01px 391.01px 180px;
+    grid-template-areas:
+        "name email ."
+        "company phone actions";
+    column-gap: 24.99px;
+    row-gap: 24.53px;
+    align-items: end;
+}
+
+.catalog-page__field {
+    display: flex;
+    flex-direction: column;
+    gap: 10.53px;
+}
+
+.catalog-page__field:nth-child(1) { grid-area: name; }
+.catalog-page__field:nth-child(2) { grid-area: email; }
+.catalog-page__field:nth-child(3) { grid-area: company; }
+.catalog-page__field:nth-child(4) { grid-area: phone; }
+
+.catalog-page__field span {
+    color: #000;
+    font-family: "Montserrat", sans-serif;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 150%;
+}
+
+.catalog-page__field input {
+    width: 391.01px;
+    height: 46.933px;
+    border: 1px solid #DBDADA;
+    background: #FFF;
+    padding: 11px 16px;
+    color: #1A181C;
+    font-family: "Montserrat", sans-serif;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 150%;
+    box-sizing: border-box;
+}
+
+.catalog-page__actions {
+    grid-area: actions;
+    display: flex;
+    align-items: flex-end;
+    padding-bottom: 0;
+}
+
+.catalog-page__submit {
+    display: flex;
+    width: 180px;
+    height: 47px;
+    padding: 18px 20px;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    border: 1px solid #093E66;
+    background: #093E66;
+    cursor: pointer;
+    box-sizing: border-box;
+}
+
+.catalog-page__submit span {
+    width: 170px;
+    flex-shrink: 0;
+    color: #FFF;
+    text-align: center;
+    font-family: "Montserrat", sans-serif;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: normal;
+    letter-spacing: 0.32px;
+    text-transform: uppercase;
+}
+
+@media (max-width: 1280px) {
+    .catalog-page__content {
+        padding-left: 24px;
+        padding-right: 24px;
+    }
+}
+
+@media (max-width: 1024px) {
+    .catalog-page__notice,
+    .catalog-page__content {
+        width: 100%;
+    }
+
+    .catalog-page__content {
+        padding-top: 48px;
+        padding-bottom: 48px;
+    }
+
+    .catalog-page__grid {
+        grid-template-columns: 1fr;
+        grid-template-areas:
+            "name"
+            "email"
+            "company"
+            "phone"
+            "actions";
+    }
+
+    .catalog-page__field input {
+        width: 100%;
+    }
+
+    .catalog-page__actions {
+        justify-content: flex-start;
+    }
+}
+
+@media (max-width: 768px) {
+    .catalog-page {
+        padding: 0 0 56px;
+    }
+
+    .catalog-page__notice {
+        margin-bottom: 18px;
+        padding: 14px 16px;
+        font-size: 13px;
+    }
+
+    .catalog-page__content {
+        padding: 28px 20px 40px;
+    }
+
+    .catalog-page__content h2 {
+        margin-bottom: 20px;
+        font-size: 26px;
+        line-height: 1.2;
+    }
+
+    .catalog-page__grid {
+        row-gap: 18px;
+    }
+
+    .catalog-page__field {
+        gap: 8px;
+    }
+
+    .catalog-page__field span {
+        font-size: 15px;
+    }
+
+    .catalog-page__field input {
+        height: 48px;
+        padding: 12px 14px;
+        font-size: 15px;
+    }
+
+    .catalog-page__actions {
+        justify-content: stretch;
+    }
+
+    .catalog-page__submit {
+        width: 100%;
+        min-height: 48px;
+        height: auto;
+        padding: 14px 18px;
+    }
+
+    .catalog-page__submit span {
+        width: auto;
+        font-size: 14px;
+        letter-spacing: 0.24px;
+    }
+}

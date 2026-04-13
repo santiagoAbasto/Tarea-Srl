@@ -1,0 +1,426 @@
+.footer {
+    width: 100vw;
+    height: 415px;
+    margin-left: calc(50% - 50vw);
+    margin-right: calc(50% - 50vw);
+    display: flex;
+    flex-direction: column;
+    background:
+        linear-gradient(0deg, rgba(0, 0, 0, 0.20) 0%, rgba(0, 0, 0, 0.20) 100%),
+        #093E66;
+    color: #fff;
+    padding-top: 0;
+}
+
+.footer > .container {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    padding-top: 76px;
+}
+
+.footer__brand {
+    color: #fff;
+}
+
+.footer__grid {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr 1.25fr 318px;
+    gap: 28px;
+    align-items: start;
+}
+
+.footer__title {
+    margin: 0 0 13px;
+    color: #FFF;
+    font-family: "Montserrat", sans-serif;
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 120%;
+    text-transform: none;
+}
+
+.footer__title--social {
+    margin-top: 34px;
+    margin-bottom: 13px;
+}
+
+.footer__links,
+.footer__contact,
+.footer__social {
+    display: grid;
+    gap: 10px;
+    color: #FFF;
+    font-family: "Montserrat", sans-serif;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 150%;
+}
+
+.footer__links {
+    grid-template-columns: repeat(2, max-content);
+    column-gap: 47px;
+    row-gap: 6px;
+}
+
+.footer__social > div {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+}
+
+.footer__contact {
+    width: 288px;
+    gap: 14px;
+    color: #FFF;
+    font-family: "Montserrat", sans-serif;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 150%;
+}
+
+.footer__contact a {
+    display: inline-flex;
+    align-items: flex-start;
+    gap: 10px;
+    width: 288px;
+    color: #FFF;
+    text-decoration: none;
+}
+
+.footer__contact a:first-child {
+    width: 318px;
+}
+
+.footer__contact a:first-child .footer__contact-icon {
+    flex: 0 0 20px;
+}
+
+.footer__contact a:first-child span:last-child {
+    width: 288px;
+}
+
+
+.footer__contact-icon {
+    width: 20px;
+    height: 20px;
+    flex: 0 0 20px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.footer__grid > :nth-child(2) .footer__title {
+    margin-bottom: 26px;
+}
+
+.footer__grid > :nth-child(3) .footer__title:not(.footer__title--social) {
+    margin-bottom: 32px;
+}
+
+.footer__grid > :nth-child(4) .footer__title {
+    margin-bottom: 22px;
+}
+
+.footer__social-link {
+    margin-right: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    text-decoration: none;
+}
+
+.footer__newsletter {
+    display: flex;
+    width: 289px;
+    height: 40px;
+    border: 1px solid #FFF;
+    overflow: hidden;
+    max-width: 289px;
+    padding: 9px 15px 7px 0;
+    box-sizing: border-box;
+}
+
+.footer__newsletter input {
+    width: 100%;
+    border: 0;
+    background: transparent;
+    color: #fff;
+    padding: 10px 0 9px 12px;
+    font-family: "Montserrat", sans-serif;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 150%;
+    outline: none;
+    box-shadow: none;
+    border-radius: 0;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+}
+
+.footer__newsletter input:focus,
+.footer__newsletter input:focus-visible {
+    outline: none;
+    box-shadow: none;
+}
+
+.footer__newsletter input:-webkit-autofill,
+.footer__newsletter input:-webkit-autofill:hover,
+.footer__newsletter input:-webkit-autofill:focus,
+.footer__newsletter input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 1000px transparent inset;
+    -webkit-text-fill-color: #FFF;
+    caret-color: #FFF;
+    transition: background-color 9999s ease-in-out 0s;
+}
+
+.footer__newsletter button {
+    border: 0;
+    background: transparent;
+    color: #fff;
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 24px;
+}
+
+.footer__bottom {
+    width: 100%;
+    height: 67px;
+    background:
+        linear-gradient(0deg, rgba(0, 0, 0, 0.25) 0%, rgba(0, 0, 0, 0.25) 100%),
+        #093E66;
+    padding: 0;
+    margin-top: auto;
+    color: #FFF;
+}
+
+.footer__bottom-inner {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    align-items: center;
+    gap: 20px;
+    width: 100%;
+    height: 67px;
+}
+
+.footer__bottom-inner > :first-child {
+    justify-self: start;
+}
+
+.footer__bottom-inner > :nth-child(2) {
+    justify-self: center;
+}
+
+.footer__bottom-inner > :last-child {
+    justify-self: end;
+}
+
+.footer__byline {
+    color: #FFF;
+    font-family: "Montserrat", sans-serif;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 150%;
+}
+
+.footer__bottom-inner > :first-child {
+    color: #FFF;
+    font-family: "Montserrat", sans-serif;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 150%;
+    white-space: nowrap;
+}
+
+.footer__osole {
+    color: #FFF;
+    font-family: "Montserrat", sans-serif;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 150%;
+    text-decoration: none;
+}
+
+.footer__whatsapp-float {
+    position: fixed;
+    right: 25px;
+    bottom: 67px;
+    z-index: 1000;
+    display: flex;
+    padding: 16px;
+    justify-content: center;
+    align-items: center;
+    border-radius: 64px;
+    background: #00C820;
+    box-shadow: 0 4px 16px 0 rgba(0, 0, 0, 0.10);
+    text-decoration: none;
+}
+
+.footer__whatsapp-float svg {
+    width: 34px;
+    height: 34px;
+    flex-shrink: 0;
+    display: block;
+}
+
+.whatsapp-float:hover {
+    background: #1ebe5a;
+    transform: scale(1.08);
+}
+
+
+@media (max-width: 900px) {
+    .footer__grid {
+        grid-template-columns: 1fr;
+    }
+
+    .footer__whatsapp-float {
+        right: 20px;
+        bottom: 67px;
+    }
+}
+
+/* ================================================================
+   FOOTER — MOBILE (max-width: 768px)
+================================================================ */
+
+@media (max-width: 768px) {
+    .footer {
+        height: auto;
+    }
+
+    .footer > .container {
+        padding-top: 44px;
+        padding-bottom: 0;
+    }
+
+    .footer__grid {
+        gap: 28px;
+    }
+
+    /* Logo del footer a tamaño proporcional */
+    .footer .brand__logo {
+        height: 56px;
+        width: auto;
+    }
+
+    /* Newsletter: ancho completo */
+    .footer__newsletter {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    /* Contacto: ancho completo */
+    .footer__contact {
+        width: 100%;
+    }
+
+    .footer__contact a,
+    .footer__contact a:first-child {
+        width: 100%;
+    }
+
+    .footer__contact a:first-child span:last-child {
+        width: auto;
+        flex: 1;
+    }
+
+    /* Bottom bar: stack vertical centrado */
+    .footer__bottom {
+        height: auto;
+    }
+
+    .footer__bottom-inner {
+        grid-template-columns: 1fr;
+        height: auto;
+        gap: 6px;
+        padding: 16px 0;
+        text-align: center;
+    }
+
+    .footer__bottom-inner > :first-child,
+    .footer__bottom-inner > :nth-child(2),
+    .footer__bottom-inner > :last-child {
+        justify-self: center;
+        white-space: normal;
+        text-align: center;
+    }
+
+    /* WhatsApp: alejado del borde inferior en mobile */
+    .footer__whatsapp-float {
+        right: 16px;
+        bottom: 24px;
+        padding: 14px;
+    }
+
+    .footer__whatsapp-float svg {
+        width: 28px;
+        height: 28px;
+    }
+}
+
+.ios-toast-root {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding-top: max(14px, env(safe-area-inset-top));
+    pointer-events: none;
+    z-index: 2147483647;
+}
+
+.ios-toast {
+    position: relative;
+    transform: translateY(-14px) scale(0.98);
+    min-width: 280px;
+    max-width: 88vw;
+    padding: 12px 16px;
+    border-radius: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    background: rgba(34, 42, 56, 0.95);
+    box-shadow: 0 14px 28px rgba(7, 10, 16, 0.28);
+    backdrop-filter: blur(14px) saturate(120%);
+    -webkit-backdrop-filter: blur(14px) saturate(120%);
+    color: #FFF;
+    font-family: "Montserrat", sans-serif;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 150%;
+    text-align: center;
+    letter-spacing: 0.15px;
+    opacity: 0;
+    z-index: 1;
+    transition: opacity 240ms ease, transform 240ms ease;
+}
+
+.ios-toast.is-visible {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+}
+
+.ios-toast--success {
+    border-color: rgba(143, 216, 248, 0.34);
+    background: rgba(29, 41, 58, 0.95);
+}
+
+.ios-toast--error {
+    border-color: rgba(255, 123, 150, 0.36);
+    background:
+        linear-gradient(135deg, rgba(62, 18, 29, 0.92) 0%, rgba(104, 28, 47, 0.92) 100%);
+}

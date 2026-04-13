@@ -1,0 +1,12 @@
+body {
+    background: #1e1e1e;
+    color: var(--ink, #0f1720);
+    font-family: "Montserrat", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.page-shell {
+    width: 100%;
+    min-height: 100vh;
+    background: var(--bg, #f4f6f8);
+    overflow: hidden;
+}

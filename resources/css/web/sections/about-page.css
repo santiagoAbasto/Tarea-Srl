@@ -1,0 +1,377 @@
+.about-page__intro {
+    padding: 80px 0 44px;
+    background: #FFF;
+}
+
+.about-page__intro-grid {
+    display: grid;
+    grid-template-columns: 597px 1fr;
+    gap: 26px;
+    align-items: start;
+}
+
+.about-page__intro-copy,
+.about-page__intro-media,
+.about-card,
+.about-value,
+.about-memberships__item {
+    min-width: 0;
+}
+
+.about-page__intro-copy h2,
+.about-page__section-title {
+    display: flex;
+    width: 615px;
+    height: 40px;
+    flex-direction: column;
+    justify-content: center;
+    margin: 0 0 20px;
+    color: #353C47;
+    font-family: "Montserrat", sans-serif;
+    font-size: 32px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 120%;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+.about-page__intro-text {
+    width: 597px;
+    color: #000;
+    font-family: "Montserrat", sans-serif;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 150%;
+    max-width: 100%;
+    overflow-wrap: normal;
+    word-break: normal;
+    hyphens: manual;
+}
+
+.about-page__intro-text p,
+.about-card__text p {
+    margin: 0 0 24px;
+}
+
+.about-page__intro-text p:last-child,
+.about-card__text p:last-child {
+    margin-bottom: 0;
+}
+
+.about-page__intro-media img {
+    width: 600px;
+    height: 600px;
+    object-fit: cover;
+    display: block;
+    max-width: 100%;
+}
+
+.about-page__mission-vision {
+    padding: 0 0 0;
+    width: 100vw;
+    margin-left: calc(50% - 50vw);
+    margin-right: calc(50% - 50vw);
+    background: linear-gradient(90deg, #093E66 0 50%, #035183 50% 100%);
+}
+
+.about-page__mission-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 683px);
+    justify-content: center;
+    width: 1366px;
+    max-width: 100%;
+    margin: 0 auto;
+}
+
+.about-card {
+    width: 683px;
+    height: 492px;
+    padding: 53px 64px 59px 71px;
+    box-sizing: border-box;
+    color: #FFF;
+}
+
+.about-card--mission {
+    background: #093E66;
+}
+
+.about-card--vision {
+    background: #035183;
+    padding: 53px 71px 59px 61px;
+}
+
+.about-card__heading {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    margin-bottom: 33px;
+}
+
+.about-card__heading h2 {
+    margin: 0;
+    flex: 1 1 auto;
+    min-width: 0;
+    color: #FFF;
+    font-family: "Montserrat", sans-serif;
+    font-size: 32px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 120%;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+.about-card__text {
+    color: #FFF;
+    font-family: "Montserrat", sans-serif;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 150%;
+    overflow-wrap: normal;
+    word-break: normal;
+    hyphens: manual;
+    max-width: 100%;
+}
+
+.about-card--mission .about-card__text {
+    width: 548px;
+    height: 287px;
+    max-width: 100%;
+}
+
+.about-card--vision .about-card__text {
+    width: 562px;
+    height: 258px;
+    max-width: 100%;
+}
+
+.about-page__values {
+    padding: 46px 0 74px;
+    background: #F7F8FA;
+}
+
+.about-values__grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 32px;
+    align-items: start;
+    margin-top: 74px;
+}
+
+.about-value {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.about-value__icon {
+    width: 60px;
+    height: 60px;
+    aspect-ratio: 1 / 1;
+}
+
+.about-value h3 {
+    margin: 42px 0 0;
+    color: #1A181C;
+    text-align: center;
+    font-family: "Montserrat", sans-serif;
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 150%;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+.about-page__memberships {
+    padding: 39px 0;
+    background: #FFF;
+}
+
+.about-page__memberships .about-page__section-title {
+    margin-bottom: 0;
+}
+
+.about-memberships__grid {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 37px;
+    margin-top: 28px;
+}
+
+.about-memberships__item img {
+    display: block;
+    max-width: 100%;
+    width: auto;
+    object-fit: contain;
+}
+
+.about-memberships__item--cadieel img {
+    width: 250px;
+    height: 67px;
+    aspect-ratio: 250 / 67;
+}
+
+.about-memberships__item--gapp img {
+    width: 372px;
+    height: 97px;
+    aspect-ratio: 372 / 97;
+}
+
+@media (max-width: 1280px) {
+    .about-page__intro-grid,
+    .about-page__mission-grid,
+    .about-values__grid {
+        grid-template-columns: 1fr;
+    }
+
+    .about-page__intro-copy h2,
+    .about-page__section-title,
+    .about-page__intro-text,
+    .about-card--mission .about-card__text,
+    .about-card--vision .about-card__text {
+        width: 100%;
+    }
+
+    .about-card {
+        width: 100%;
+        height: auto;
+    }
+
+    .about-page__intro-media img {
+        height: auto;
+    }
+}
+
+@media (max-width: 768px) {
+    .about-page__intro {
+        padding: 56px 0 36px;
+    }
+
+    .about-page__intro-grid {
+        gap: 24px;
+    }
+
+    .about-page__intro-copy h2,
+    .about-page__section-title {
+        width: 100%;
+        height: auto;
+        margin-bottom: 16px;
+        font-size: 28px;
+        line-height: 1.2;
+    }
+
+    .about-page__intro-text {
+        width: 100%;
+        font-size: 15px;
+        line-height: 1.7;
+    }
+
+    .about-page__intro-text p,
+    .about-card__text p {
+        margin-bottom: 18px;
+    }
+
+    .about-page__intro-media img {
+        width: 100%;
+        height: auto;
+    }
+
+    .about-page__mission-vision {
+        background: transparent;
+    }
+
+    .about-page__mission-grid {
+        width: 100%;
+    }
+
+    .about-card {
+        width: 100%;
+        height: auto;
+        padding: 32px 24px;
+    }
+
+    .about-card--vision {
+        padding: 32px 24px;
+    }
+
+    .about-card__heading {
+        align-items: flex-start;
+        gap: 18px;
+        margin-bottom: 24px;
+    }
+
+    .about-card__heading svg {
+        width: 48px;
+        height: 48px;
+        flex-shrink: 0;
+    }
+
+    .about-card__heading h2 {
+        font-size: 28px;
+    }
+
+    .about-card__text,
+    .about-card--mission .about-card__text,
+    .about-card--vision .about-card__text {
+        width: 100%;
+        height: auto;
+        font-size: 15px;
+        line-height: 1.7;
+    }
+
+    .about-page__values {
+        padding: 40px 0 52px;
+    }
+
+    .about-values__grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 24px 18px;
+        margin-top: 36px;
+    }
+
+    .about-value h3 {
+        margin-top: 20px;
+        font-size: 17px;
+        line-height: 1.45;
+    }
+
+    .about-page__memberships {
+        padding: 36px 0 44px;
+    }
+
+    .about-memberships__grid {
+        justify-content: center;
+        gap: 18px;
+        margin-top: 24px;
+    }
+
+    .about-memberships__item {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+    }
+
+    .about-memberships__item--cadieel img {
+        width: min(100%, 250px);
+        height: auto;
+    }
+
+    .about-memberships__item--gapp img {
+        width: min(100%, 320px);
+        height: auto;
+    }
+}
+
+@media (max-width: 480px) {
+    .about-values__grid {
+        grid-template-columns: 1fr;
+    }
+}

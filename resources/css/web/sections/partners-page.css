@@ -1,0 +1,123 @@
+.partners-page-hero {
+    height: 350px;
+    min-height: 350px;
+}
+
+.partners-page-hero .page-hero__content {
+    height: 350px;
+    padding-top: 90px;
+    padding-bottom: 64px;
+    box-sizing: border-box;
+}
+
+.partners-page-hero .page-hero__overlay {
+    background:
+        linear-gradient(0deg, rgba(0, 0, 0, 0.40) 0%, rgba(0, 0, 0, 0.40) 100%),
+        linear-gradient(180deg, rgba(0, 0, 0, 0.65) 0%, rgba(0, 0, 0, 0.00) 124.5%);
+}
+
+.partners-page-hero .site-header {
+    background: transparent;
+    box-shadow: none;
+}
+
+.partners-page-hero .page-hero__media img {
+    object-position: center 35%;
+}
+
+.partners-page-hero .site-header.site-header--scrolled {
+    background: #093E66 !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.18);
+}
+
+.partners-page {
+    padding: 125px 0;
+    background: #FFF;
+}
+
+.partners-page__inner {
+    display: flex;
+    justify-content: center;
+}
+
+.partners-page__logos {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 59.787px;
+    flex-wrap: wrap;
+    min-width: 0;
+}
+
+.partners-page__logo-card {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.partners-page__logo {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    object-fit: contain;
+}
+
+.partners-page__logo-card--maurizio .partners-page__logo {
+    width: 169.858px;
+    height: 95.121px;
+}
+
+.partners-page__logo-card--cst .partners-page__logo {
+    width: 254.199px;
+    height: 87.167px;
+}
+
+.partners-page__logo-card--entec .partners-page__logo {
+    width: 228.933px;
+    height: 68.68px;
+}
+
+.partners-page__logo-card--sao-jose .partners-page__logo {
+    width: 287.074px;
+    height: 81.106px;
+}
+
+@media (max-width: 900px) {
+    .partners-page {
+        padding: 64px 0;
+    }
+
+    .partners-page__logos {
+        gap: 32px;
+    }
+}
+
+@media (max-width: 768px) {
+    .partners-page {
+        padding: 36px 0 48px;
+    }
+
+    .partners-page__inner {
+        justify-content: stretch;
+    }
+
+    .partners-page__logos {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 24px;
+        width: 100%;
+    }
+
+    .partners-page__logo-card {
+        min-height: 84px;
+        padding: 12px 0;
+    }
+
+    .partners-page__logo-card--maurizio .partners-page__logo,
+    .partners-page__logo-card--cst .partners-page__logo,
+    .partners-page__logo-card--entec .partners-page__logo,
+    .partners-page__logo-card--sao-jose .partners-page__logo {
+        width: min(100%, 240px);
+        height: auto;
+    }
+}
