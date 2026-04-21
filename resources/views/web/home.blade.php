@@ -361,7 +361,7 @@
                 <div class="section__header">
                     <h2 class="section__title">{{ $trusted->title }}</h2>
                     @if($trusted->button_url)
-                        <a href="{{ $trusted->button_url }}" class="section__button">{{ $trusted->button_text }}</a>
+                        <a href="{{ $trusted->button_url }}" class="section__button">VER TODOS</a>
                     @endif
                 </div>
                 <div class="clients-carousel" data-clients-carousel>

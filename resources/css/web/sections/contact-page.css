@@ -184,6 +184,7 @@
     flex-direction: column;
     justify-content: space-between;
     gap: 100px;
+    min-height: calc(24px + 10.53px + 157px);
 }
 
 .contact-page__submit {
@@ -283,6 +284,7 @@
 
     .contact-page__actions {
         gap: 18px;
+        min-height: 0;
     }
 
     .contact-page__map,

@@ -21,13 +21,19 @@ class QualityController extends Controller
             ->get()
             ->keyBy('section_key');
 
+        $logos = $sections->get('quality_logos');
+
+        if ($logos) {
+            $logos->setAttribute('title', '');
+        }
+
         $headerLogo = MediaAsset::query()->where('path', 'uploads/branding/logoheader.png')->first();
 
         return view('web.quality.show', [
             'sections' => $sections,
             'hero' => $sections->get('quality_banner'),
             'policy' => $sections->get('quality_policy'),
-            'logos' => $sections->get('quality_logos'),
+            'logos' => $logos,
             'headerLogo' => $headerLogo,
             'headerLogoUrl' => $headerLogo ? media_asset_url($headerLogo) : null,
             'footer' => FooterSetting::query()->with('logo')->first(),
