@@ -24,6 +24,115 @@ function slugify(value) {
         .replace(/^-+|-+$/g, "");
 }
 
+function normalizeSpecLabel(value) {
+    return String(value || "")
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/[øØ]/g, "o")
+        .toLowerCase()
+        .trim()
+        .replace(/[^a-z0-9]+/g, " ")
+        .replace(/\s+/g, " ")
+        .trim();
+}
+
+function specChildLabel(value) {
+    const stripped = String(value || "")
+        .trim()
+        .replace(/^\s*rango\s+/i, "")
+        .replace(/^\s*[øØo]?\s*c?\s*cable\s*/i, "");
+    const key = normalizeSpecLabel(stripped);
+
+    if (key === "max") {
+        return "máx";
+    }
+
+    if (["cu", "cobre", "al ac", "al acsr", "alac"].includes(key)) {
+        return "Cu";
+    }
+
+    if (["ai", "al", "aluminio"].includes(key)) {
+        return "Al";
+    }
+
+    return stripped;
+}
+
+function groupedSpecLayout(columns) {
+    let rangeStart = null;
+    let cableStart = null;
+
+    columns.forEach((column, index) => {
+        const next = columns[index + 1];
+
+        if (!next) {
+            return;
+        }
+
+        if (
+            rangeStart === null &&
+            normalizeSpecLabel(column.label).startsWith("rango") &&
+            normalizeSpecLabel(next.label).startsWith("rango")
+        ) {
+            rangeStart = index;
+        }
+
+        if (
+            cableStart === null &&
+            /^(?:o\s*c?\s*)?cable\b/.test(normalizeSpecLabel(column.label)) &&
+            /^(?:o\s*c?\s*)?cable\b/.test(normalizeSpecLabel(next.label))
+        ) {
+            cableStart = index;
+        }
+    });
+
+    const grouped = rangeStart !== null && cableStart !== null && rangeStart < cableStart;
+
+    return {
+        grouped,
+        rangeStart,
+        cableStart,
+        rangeUnit: grouped ? columns[rangeStart]?.unit || columns[rangeStart + 1]?.unit || "" : "",
+        cableUnit: grouped ? columns[cableStart]?.unit || columns[cableStart + 1]?.unit || "" : "",
+        subheaderIndexes: grouped
+            ? [rangeStart, rangeStart + 1, cableStart, cableStart + 1]
+            : [],
+    };
+}
+
+function technicalSheetColumnsTemplate() {
+    return [
+        { label: "CÓDIGO", unit: "" },
+        { label: "RANGO Al", unit: "mm²" },
+        { label: "RANGO Cu", unit: "mm²" },
+        { label: "øCABLE min", unit: "mm" },
+        { label: "øCABLE max", unit: "mm" },
+        { label: "A", unit: "mm²" },
+        { label: "B", unit: "mm" },
+        { label: "C", unit: "pulg." },
+        { label: "D", unit: "mm" },
+        { label: "CRMT", unit: "daN" },
+        { label: "PESO", unit: "kg" },
+    ];
+}
+
+function technicalSheetPendulumColumnsTemplate() {
+    return [
+        { label: "CÓDIGO", unit: "" },
+        { label: "MODELO", unit: "" },
+        { label: "RANGO Aluminio", unit: "mm²" },
+        { label: "RANGO Aluminio/Acero", unit: "mm²" },
+        { label: "øC Cable Minimo", unit: "mm" },
+        { label: "øC Cable Maximo", unit: "mm" },
+        { label: "A", unit: "mm" },
+        { label: "B", unit: "mm" },
+        { label: "Péndulo", unit: "" },
+        { label: "Apto Contrapeso", unit: "" },
+        { label: "CRMT", unit: "daN" },
+        { label: "PESO", unit: "kg" },
+    ];
+}
+
 function emptyHeroForm(hero) {
     return {
         id: hero?.id ?? null,
@@ -73,10 +182,12 @@ function emptySubfamilyForm(subfamily = null) {
 }
 
 function emptySpecTable() {
+    const columns = technicalSheetColumnsTemplate();
+
     return {
-        title: "",
-        columns: [{ label: "", unit: "" }],
-        rows: [{ values: [""] }],
+        title: "Tabla técnica",
+        columns,
+        rows: [{ values: columns.map(() => "") }],
     };
 }
 
@@ -891,6 +1002,189 @@ function GalleryEditor({ gallery, onChange }) {
     );
 }
 
+function SpecTablePreview({ table }) {
+    const columns = (table.columns ?? [])
+        .map((column, index) => ({ ...column, sourceIndex: index }))
+        .filter((column) => String(column.label || "").trim() !== "");
+    const rows = table.rows?.length ? table.rows : [{ values: [] }];
+    const layout = groupedSpecLayout(columns);
+    const mergeColumnKeys = ["pendulo"];
+
+    const bodyCells = rows.map((row) => columns.map((column) => row.values?.[column.sourceIndex] || ""));
+    const skipCells = {};
+    const rowspans = {};
+
+    columns.forEach((column, columnIndex) => {
+        if (!mergeColumnKeys.includes(normalizeSpecLabel(column.label))) {
+            return;
+        }
+
+        bodyCells.forEach((row, rowIndex) => {
+            if (skipCells[`${rowIndex}-${columnIndex}`]) {
+                return;
+            }
+
+            const value = String(row[columnIndex] || "").trim();
+            let span = 1;
+
+            if (value !== "") {
+                for (let nextRowIndex = rowIndex + 1; nextRowIndex < bodyCells.length; nextRowIndex += 1) {
+                    if (String(bodyCells[nextRowIndex]?.[columnIndex] || "").trim() !== value) {
+                        break;
+                    }
+
+                    span += 1;
+                    skipCells[`${nextRowIndex}-${columnIndex}`] = true;
+                }
+            }
+
+            rowspans[`${rowIndex}-${columnIndex}`] = span;
+        });
+    });
+
+    if (columns.length === 0) {
+        return (
+            <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-5 text-sm text-slate-500">
+                Cargá columnas para ver la previsualización de la ficha técnica.
+            </div>
+        );
+    }
+
+    return (
+        <div className="rounded-2xl border border-slate-200 bg-white p-4">
+            <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+                <div>
+                    <p className="text-sm font-semibold text-slate-900">
+                        Preview ficha técnica
+                    </p>
+                    <p className="text-xs text-slate-500">
+                        Así se verá en la web pública y en el PDF.
+                    </p>
+                </div>
+                {layout.grouped ? (
+                    <span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">
+                        Formato agrupado activo
+                    </span>
+                ) : (
+                    <span className="rounded-full bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-700">
+                        Formato simple
+                    </span>
+                )}
+            </div>
+
+            <div className="overflow-x-auto">
+                <table className="min-w-full border-collapse text-center text-sm text-slate-800">
+                    <thead className="bg-[#eef2f4]">
+                        {layout.grouped ? (
+                            <>
+                                <tr>
+                                    {columns.map((column, columnIndex) => {
+                                        if (columnIndex === layout.rangeStart) {
+                                            return (
+                                                <th
+                                                    key="preview-range-head"
+                                                    colSpan={2}
+                                                    className="border border-slate-300 px-4 py-2 font-bold uppercase"
+                                                >
+                                                    RANGO {layout.rangeUnit ? `[${layout.rangeUnit}]` : ""}
+                                                </th>
+                                            );
+                                        }
+
+                                        if (columnIndex === layout.rangeStart + 1) {
+                                            return null;
+                                        }
+
+                                        if (columnIndex === layout.cableStart) {
+                                            return (
+                                                <th
+                                                    key="preview-cable-head"
+                                                    colSpan={2}
+                                                    className="border border-slate-300 px-4 py-2 font-bold"
+                                                >
+                                                    øC Cable {layout.cableUnit ? `[${layout.cableUnit}]` : ""}
+                                                </th>
+                                            );
+                                        }
+
+                                        if (columnIndex === layout.cableStart + 1) {
+                                            return null;
+                                        }
+
+                                        return (
+                                            <th
+                                                key={`preview-head-${column.sourceIndex}`}
+                                                rowSpan={2}
+                                                className="border border-slate-300 px-4 py-3 font-bold uppercase"
+                                            >
+                                                <span>{column.label}</span>
+                                                {column.unit ? (
+                                                    <small className="mt-1 block font-normal normal-case text-slate-600">
+                                                        [{column.unit}]
+                                                    </small>
+                                                ) : null}
+                                            </th>
+                                        );
+                                    })}
+                                </tr>
+                                <tr>
+                                    {layout.subheaderIndexes.map((columnIndex) => (
+                                        <th
+                                            key={`preview-subhead-${columns[columnIndex]?.sourceIndex}`}
+                                            className="border border-slate-300 px-4 py-2 font-bold"
+                                        >
+                                            {specChildLabel(columns[columnIndex]?.label)}
+                                        </th>
+                                    ))}
+                                </tr>
+                            </>
+                        ) : (
+                            <tr>
+                                {columns.map((column) => (
+                                    <th
+                                        key={`preview-head-${column.sourceIndex}`}
+                                        className="border border-slate-300 px-4 py-3 font-bold"
+                                    >
+                                        <span>{column.label}</span>
+                                        {column.unit ? (
+                                            <small className="mt-1 block font-normal text-slate-600">
+                                                [{column.unit}]
+                                            </small>
+                                        ) : null}
+                                    </th>
+                                ))}
+                            </tr>
+                        )}
+                    </thead>
+                    <tbody>
+                        {rows.map((row, rowIndex) => (
+                            <tr key={`preview-row-${rowIndex}`}>
+                                {columns.map((column, columnIndex) => {
+                                    const cellKey = `${rowIndex}-${columnIndex}`;
+
+                                    if (skipCells[cellKey]) {
+                                        return null;
+                                    }
+
+                                    return (
+                                        <td
+                                            key={`preview-cell-${rowIndex}-${column.sourceIndex}`}
+                                            rowSpan={rowspans[cellKey] > 1 ? rowspans[cellKey] : undefined}
+                                            className="border border-slate-300 px-4 py-3"
+                                        >
+                                            {bodyCells[rowIndex]?.[columnIndex] || "-"}
+                                        </td>
+                                    );
+                                })}
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    );
+}
+
 function SpecTablesEditor({ specTables, onChange }) {
     const updateTable = (tableIndex, updater) => {
         onChange(
@@ -904,6 +1198,42 @@ function SpecTablesEditor({ specTables, onChange }) {
 
     const removeTable = (tableIndex) =>
         onChange(specTables.filter((_, index) => index !== tableIndex));
+
+    const applyTechnicalSheetTemplate = (tableIndex) =>
+        updateTable(tableIndex, (table) => {
+            const columns = technicalSheetColumnsTemplate();
+            const rows = table.rows?.length
+                ? table.rows.map((row) => ({
+                      ...row,
+                      values: columns.map((_, columnIndex) => row.values?.[columnIndex] ?? ""),
+                  }))
+                : [{ values: columns.map(() => "") }];
+
+            return {
+                ...table,
+                title: table.title || "Tabla técnica",
+                columns,
+                rows,
+            };
+        });
+
+    const applyPendulumTechnicalSheetTemplate = (tableIndex) =>
+        updateTable(tableIndex, (table) => {
+            const columns = technicalSheetPendulumColumnsTemplate();
+            const rows = table.rows?.length
+                ? table.rows.map((row) => ({
+                      ...row,
+                      values: columns.map((_, columnIndex) => row.values?.[columnIndex] ?? ""),
+                  }))
+                : Array.from({ length: 8 }, () => ({ values: columns.map(() => "") }));
+
+            return {
+                ...table,
+                title: table.title || "Tabla técnica",
+                columns,
+                rows,
+            };
+        });
 
     const addColumn = (tableIndex) =>
         updateTable(tableIndex, (table) => ({
@@ -977,13 +1307,29 @@ function SpecTablesEditor({ specTables, onChange }) {
                                 <p className="text-sm font-semibold text-slate-900">
                                     Columnas
                                 </p>
-                                <button
-                                    type="button"
-                                    onClick={() => addColumn(tableIndex)}
-                                    className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 transition hover:border-[#25A7CA] hover:text-[#117a98]"
-                                >
-                                    Agregar columna
-                                </button>
+                                <div className="flex flex-wrap justify-end gap-2">
+                                    <button
+                                        type="button"
+                                        onClick={() => applyTechnicalSheetTemplate(tableIndex)}
+                                        className="rounded-xl border border-[#25A7CA]/30 bg-[#25A7CA]/10 px-3 py-2 text-xs font-semibold text-[#117a98] transition hover:bg-[#25A7CA]/15"
+                                    >
+                                        Formato simple
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={() => applyPendulumTechnicalSheetTemplate(tableIndex)}
+                                        className="rounded-xl border border-[#093E66]/25 bg-[#093E66]/10 px-3 py-2 text-xs font-semibold text-[#093E66] transition hover:bg-[#093E66]/15"
+                                    >
+                                        Formato con péndulo
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={() => addColumn(tableIndex)}
+                                        className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 transition hover:border-[#25A7CA] hover:text-[#117a98]"
+                                    >
+                                        Agregar columna
+                                    </button>
+                                </div>
                             </div>
 
                             {table.columns.map((column, columnIndex) => (
@@ -1045,10 +1391,17 @@ function SpecTablesEditor({ specTables, onChange }) {
                         </div>
 
                         <div className="space-y-3">
-                            <div className="flex items-center justify-between gap-3">
-                                <p className="text-sm font-semibold text-slate-900">
-                                    Filas
-                                </p>
+                            <div className="flex flex-wrap items-start justify-between gap-3">
+                                <div>
+                                    <p className="text-sm font-semibold text-slate-900">
+                                        Datos de la tabla
+                                    </p>
+                                    <p className="mt-1 text-xs leading-5 text-slate-500">
+                                        Cargá una fila por modelo. Para fusionar el péndulo
+                                        como en la ficha, repetí exactamente el mismo texto en
+                                        filas consecutivas, por ejemplo Fundido o Forjado.
+                                    </p>
+                                </div>
                                 <button
                                     type="button"
                                     onClick={() => addRow(tableIndex)}
@@ -1058,63 +1411,95 @@ function SpecTablesEditor({ specTables, onChange }) {
                                 </button>
                             </div>
 
-                            {table.rows.map((row, rowIndex) => (
-                                <div
-                                    key={`row-${rowIndex}`}
-                                    className="rounded-2xl border border-slate-200 bg-white p-4"
-                                >
-                                    <div className="mb-3 flex items-center justify-between gap-3">
-                                        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-400">
-                                            Fila {rowIndex + 1}
-                                        </p>
-                                        {table.rows.length > 1 ? (
-                                            <button
-                                                type="button"
-                                                onClick={() =>
-                                                    removeRow(tableIndex, rowIndex)
-                                                }
-                                                className="rounded-xl border border-red-200 px-3 py-1.5 text-xs font-semibold text-red-600 transition hover:bg-red-50"
-                                            >
-                                                Quitar fila
-                                            </button>
-                                        ) : null}
-                                    </div>
+                            <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white">
+                                <table className="min-w-full border-collapse text-sm">
+                                    <thead className="bg-slate-100 text-left text-xs uppercase tracking-[0.12em] text-slate-500">
+                                        <tr>
+                                            <th className="w-16 border border-slate-200 px-3 py-3 font-semibold">
+                                                Fila
+                                            </th>
+                                            {table.columns.map((column, columnIndex) => (
+                                                <th
+                                                    key={`sheet-head-${columnIndex}`}
+                                                    className="min-w-[150px] border border-slate-200 px-3 py-3 font-semibold"
+                                                >
+                                                    <span>{column.label || `Columna ${columnIndex + 1}`}</span>
+                                                    {column.unit ? (
+                                                        <small className="mt-1 block normal-case tracking-normal text-slate-400">
+                                                            [{column.unit}]
+                                                        </small>
+                                                    ) : null}
+                                                </th>
+                                            ))}
+                                            <th className="w-24 border border-slate-200 px-3 py-3 font-semibold">
+                                                Acción
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {table.rows.map((row, rowIndex) => (
+                                            <tr key={`sheet-row-${rowIndex}`}>
+                                                <td className="border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-semibold uppercase tracking-[0.12em] text-slate-400">
+                                                    {rowIndex + 1}
+                                                </td>
+                                                {table.columns.map((column, columnIndex) => (
+                                                    <td
+                                                        key={`sheet-cell-${rowIndex}-${columnIndex}`}
+                                                        className="border border-slate-200 p-2"
+                                                    >
+                                                        <input
+                                                            value={row.values?.[columnIndex] ?? ""}
+                                                            onChange={(event) => {
+                                                                const nextValue = event.target.value;
 
-                                    <div className="grid gap-3 md:grid-cols-2">
-                                        {table.columns.map((column, columnIndex) => (
-                                            <TextInput
-                                                key={`cell-${rowIndex}-${columnIndex}`}
-                                                value={row.values[columnIndex] ?? ""}
-                                                onChange={(event) =>
-                                                    updateTable(tableIndex, (current) => ({
-                                                        ...current,
-                                                        rows: current.rows.map(
-                                                            (item, currentRowIndex) =>
-                                                                currentRowIndex === rowIndex
-                                                                    ? {
-                                                                          ...item,
-                                                                          values: item.values.map(
-                                                                              (
-                                                                                  cell,
-                                                                                  currentColumnIndex,
-                                                                              ) =>
-                                                                                  currentColumnIndex ===
-                                                                                  columnIndex
-                                                                                      ? event.target.value
-                                                                                      : cell,
-                                                                          ),
-                                                                      }
-                                                                    : item,
-                                                        ),
-                                                    }))
-                                                }
-                                                placeholder={column.label || `Columna ${columnIndex + 1}`}
-                                            />
+                                                                updateTable(tableIndex, (current) => ({
+                                                                    ...current,
+                                                                    rows: current.rows.map(
+                                                                        (item, currentRowIndex) => {
+                                                                            if (currentRowIndex !== rowIndex) {
+                                                                                return item;
+                                                                            }
+
+                                                                            const values = current.columns.map(
+                                                                                (_, currentColumnIndex) =>
+                                                                                    item.values?.[currentColumnIndex] ?? "",
+                                                                            );
+                                                                            values[columnIndex] = nextValue;
+
+                                                                            return {
+                                                                                ...item,
+                                                                                values,
+                                                                            };
+                                                                        },
+                                                                    ),
+                                                                }));
+                                                            }}
+                                                            placeholder={column.label || `Columna ${columnIndex + 1}`}
+                                                            className="w-full min-w-[140px] rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition focus:border-[#25A7CA] focus:ring-4 focus:ring-[#25A7CA]/10"
+                                                        />
+                                                    </td>
+                                                ))}
+                                                <td className="border border-slate-200 p-2 text-center">
+                                                    {table.rows.length > 1 ? (
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => removeRow(tableIndex, rowIndex)}
+                                                            className="rounded-xl border border-red-200 px-3 py-2 text-xs font-semibold text-red-600 transition hover:bg-red-50"
+                                                        >
+                                                            Quitar
+                                                        </button>
+                                                    ) : (
+                                                        <span className="text-xs text-slate-300">-</span>
+                                                    )}
+                                                </td>
+                                            </tr>
                                         ))}
-                                    </div>
-                                </div>
-                            ))}
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
+
+                        <SpecTablePreview table={table} />
                     </div>
                 </div>
             ))}
@@ -1264,21 +1649,30 @@ function ProductModal({
                                 row.values.some((value) => String(value || "").trim() !== ""),
                             ),
                     )
-                    .map((table, tableIndex) => ({
-                        title: table.title || null,
-                        sort_order: String.fromCharCode(65 + tableIndex),
-                        columns: table.columns
-                            .filter((column) => column.label.trim() !== "")
-                            .map((column, columnIndex) => ({
+                    .map((table, tableIndex) => {
+                        const columns = table.columns
+                            .map((column, sourceIndex) => ({
+                                ...column,
+                                sourceIndex,
+                            }))
+                            .filter((column) => column.label.trim() !== "");
+
+                        return {
+                            title: table.title || null,
+                            sort_order: String.fromCharCode(65 + tableIndex),
+                            columns: columns.map((column, columnIndex) => ({
                                 label: column.label,
                                 unit: column.unit || null,
                                 sort_order: String.fromCharCode(65 + columnIndex),
                             })),
-                        rows: table.rows.map((row, rowIndex) => ({
-                            sort_order: String.fromCharCode(65 + rowIndex),
-                            values: row.values,
-                        })),
-                    })),
+                            rows: table.rows.map((row, rowIndex) => ({
+                                sort_order: String.fromCharCode(65 + rowIndex),
+                                values: columns.map(
+                                    (column) => row.values?.[column.sourceIndex] ?? "",
+                                ),
+                            })),
+                        };
+                    }),
             };
 
             if (form.id) {
@@ -1635,7 +2029,9 @@ function ProductModal({
                             </p>
                             <p className="mt-1 text-xs text-slate-500">
                                 Estas tablas alimentan la ficha pública y el PDF
-                                técnico del producto.
+                                técnico del producto. Usá "Formato con péndulo" para tablas
+                                como MS 132; si repetís exactamente "Fundido" o "Forjado"
+                                en filas consecutivas, la web lo fusiona automáticamente.
                             </p>
                         </div>
                         <SpecTablesEditor

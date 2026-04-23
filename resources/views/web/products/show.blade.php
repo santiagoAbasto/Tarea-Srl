@@ -210,50 +210,149 @@
                     <div class="products-show__specs">
                         @php
                             $columns = $specTable->columns->values();
-                            $isGroupedSpecsHeader =
-                                $columns->count() >= 11
-                                && $columns->get(0)?->label === 'CÓDIGO'
-                                && str_starts_with($columns->get(1)?->label ?? '', 'RANGO ')
-                                && str_starts_with($columns->get(2)?->label ?? '', 'RANGO ')
-                                && str_starts_with($columns->get(3)?->label ?? '', 'øCABLE ')
-                                && str_starts_with($columns->get(4)?->label ?? '', 'øCABLE ');
+                            $specLabelKey = function ($label) {
+                                $label = \Illuminate\Support\Str::ascii((string) $label);
+                                $label = str_replace(['ø', 'Ø'], 'o', $label);
+                                $label = mb_strtolower(trim($label));
+                                $label = preg_replace('/[^a-z0-9]+/u', ' ', $label);
+
+                                return trim(preg_replace('/\s+/u', ' ', $label));
+                            };
+                            $stripSpecGroupPrefix = function ($label) {
+                                $label = trim((string) $label);
+                                $label = preg_replace('/^\s*rango\s+/iu', '', $label);
+                                $label = preg_replace('/^\s*[øØo]?\s*c?\s*cable\s*/iu', '', $label);
+                                $labelKey = mb_strtolower(\Illuminate\Support\Str::ascii(trim($label)));
+
+                                if ($labelKey === 'max') {
+                                    return 'máx';
+                                }
+
+                                if (in_array($labelKey, ['cu', 'cobre', 'al ac', 'al acsr', 'alac'], true)) {
+                                    return 'Cu';
+                                }
+
+                                if (in_array($labelKey, ['ai', 'al', 'aluminio'], true)) {
+                                    return 'Al';
+                                }
+
+                                return $label;
+                            };
+                            $isRangeColumn = fn ($column) => preg_match('/^rango\b/u', $specLabelKey($column?->label)) === 1;
+                            $isCableColumn = fn ($column) => preg_match('/^(?:o\s*c?\s*)?cable\b/u', $specLabelKey($column?->label)) === 1;
+                            $rangeStart = null;
+                            $cableStart = null;
+
+                            for ($index = 0; $index < $columns->count() - 1; $index++) {
+                                if ($rangeStart === null && $isRangeColumn($columns->get($index)) && $isRangeColumn($columns->get($index + 1))) {
+                                    $rangeStart = $index;
+                                }
+
+                                if ($cableStart === null && $isCableColumn($columns->get($index)) && $isCableColumn($columns->get($index + 1))) {
+                                    $cableStart = $index;
+                                }
+                            }
+
+                            $isGroupedSpecsHeader = $rangeStart !== null && $cableStart !== null && $rangeStart < $cableStart;
+                            $rangeUnit = $isGroupedSpecsHeader ? ($columns->get($rangeStart)?->unit ?: $columns->get($rangeStart + 1)?->unit) : null;
+                            $cableUnit = $isGroupedSpecsHeader ? ($columns->get($cableStart)?->unit ?: $columns->get($cableStart + 1)?->unit) : null;
+                            $groupedSubheaderIndexes = $isGroupedSpecsHeader
+                                ? [$rangeStart, $rangeStart + 1, $cableStart, $cableStart + 1]
+                                : [];
+                            $groupedTopHeaderCells = [];
+
+                            if ($isGroupedSpecsHeader) {
+                                for ($columnIndex = 0; $columnIndex < $columns->count(); $columnIndex++) {
+                                    $column = $columns->get($columnIndex);
+
+                                    if ($columnIndex === $rangeStart) {
+                                        $groupedTopHeaderCells[] = [
+                                            'label' => 'RANGO',
+                                            'unit' => $rangeUnit,
+                                            'colspan' => 2,
+                                            'rowspan' => 1,
+                                        ];
+                                        $columnIndex++;
+                                        continue;
+                                    }
+
+                                    if ($columnIndex === $cableStart) {
+                                        $groupedTopHeaderCells[] = [
+                                            'label' => 'øC Cable',
+                                            'unit' => $cableUnit,
+                                            'colspan' => 2,
+                                            'rowspan' => 1,
+                                        ];
+                                        $columnIndex++;
+                                        continue;
+                                    }
+
+                                    $groupedTopHeaderCells[] = [
+                                        'label' => mb_strtoupper($column?->label ?? ''),
+                                        'unit' => $column?->unit,
+                                        'colspan' => 1,
+                                        'rowspan' => 2,
+                                    ];
+                                }
+                            }
+                            $rows = $specTable->rows->values();
+                            $rowValues = $rows->map(function ($row) use ($columns) {
+                                $valuesByColumn = $row->values->keyBy('product_spec_column_id');
+
+                                return $columns->map(fn ($column) => $valuesByColumn->get($column->id)?->value ?? '')->all();
+                            })->all();
+                            $mergeColumnKeys = ['pendulo'];
+                            $rowspans = [];
+                            $skipCells = [];
+
+                            foreach ($columns as $columnIndex => $column) {
+                                if (! in_array($specLabelKey($column->label), $mergeColumnKeys, true)) {
+                                    continue;
+                                }
+
+                                for ($rowIndex = 0; $rowIndex < count($rowValues); $rowIndex++) {
+                                    if (($skipCells[$rowIndex][$columnIndex] ?? false) === true) {
+                                        continue;
+                                    }
+
+                                    $value = trim((string) ($rowValues[$rowIndex][$columnIndex] ?? ''));
+                                    $span = 1;
+
+                                    if ($value !== '') {
+                                        for ($nextRowIndex = $rowIndex + 1; $nextRowIndex < count($rowValues); $nextRowIndex++) {
+                                            if (trim((string) ($rowValues[$nextRowIndex][$columnIndex] ?? '')) !== $value) {
+                                                break;
+                                            }
+
+                                            $span++;
+                                            $skipCells[$nextRowIndex][$columnIndex] = true;
+                                        }
+                                    }
+
+                                    $rowspans[$rowIndex][$columnIndex] = $span;
+                                }
+                            }
                         @endphp
 
                         <table class="products-show__table">
                             <thead>
                                 @if($isGroupedSpecsHeader)
                                     <tr class="products-show__table-head-row products-show__table-head-row--top">
-                                        <th rowspan="2">
-                                            <span>{{ $columns[0]->label }}</span>
-                                        </th>
-                                        <th colspan="2">
-                                            <span>RANGO [{{ $columns[1]->unit }}]</span>
-                                        </th>
-                                        <th colspan="2">
-                                            <span>øCABLE [{{ $columns[3]->unit }}]</span>
-                                        </th>
-                                        @foreach($columns->slice(5) as $column)
-                                            <th rowspan="2">
-                                                <span>{{ $column->label }}</span>
-                                                @if($column->unit)
-                                                    <small>[{{ $column->unit }}]</small>
+                                        @foreach($groupedTopHeaderCells as $cell)
+                                            <th @if($cell['colspan'] > 1) colspan="{{ $cell['colspan'] }}" @endif @if($cell['rowspan'] > 1) rowspan="{{ $cell['rowspan'] }}" @endif>
+                                                <span>{{ $cell['label'] }}</span>
+                                                @if($cell['unit'])
+                                                    <small>[{{ $cell['unit'] }}]</small>
                                                 @endif
                                             </th>
                                         @endforeach
                                     </tr>
                                     <tr class="products-show__table-head-row products-show__table-head-row--bottom">
-                                        <th>
-                                            <span>{{ str_replace('RANGO ', '', $columns[1]->label) }}</span>
-                                        </th>
-                                        <th>
-                                            <span>{{ str_replace('RANGO ', '', $columns[2]->label) }}</span>
-                                        </th>
-                                        <th>
-                                            <span>{{ str_replace('øCABLE ', '', $columns[3]->label) }}</span>
-                                        </th>
-                                        <th>
-                                            <span>{{ str_replace('øCABLE ', '', $columns[4]->label) }}</span>
-                                        </th>
+                                        @foreach($groupedSubheaderIndexes as $columnIndex)
+                                            <th>
+                                                <span>{{ $stripSpecGroupPrefix($columns->get($columnIndex)?->label) }}</span>
+                                            </th>
+                                        @endforeach
                                     </tr>
                                 @else
                                     <tr class="products-show__table-head-row">
@@ -269,13 +368,14 @@
                                 @endif
                             </thead>
                             <tbody>
-                                @foreach($specTable->rows as $row)
-                                    @php
-                                        $valuesByColumn = $row->values->keyBy('product_spec_column_id');
-                                    @endphp
+                                @foreach($rows as $rowIndex => $row)
                                     <tr>
-                                        @foreach($specTable->columns as $column)
-                                            <td>{{ $valuesByColumn->get($column->id)?->value }}</td>
+                                        @foreach($columns as $columnIndex => $column)
+                                            @if(! ($skipCells[$rowIndex][$columnIndex] ?? false))
+                                                <td @if(($rowspans[$rowIndex][$columnIndex] ?? 1) > 1) rowspan="{{ $rowspans[$rowIndex][$columnIndex] }}" @endif>
+                                                    {{ $rowValues[$rowIndex][$columnIndex] ?? '' }}
+                                                </td>
+                                            @endif
                                         @endforeach
                                     </tr>
                                 @endforeach
