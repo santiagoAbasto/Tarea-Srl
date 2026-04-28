@@ -241,6 +241,18 @@ function mapProductDetails(product) {
                 unit: column.unit ?? "",
             })),
             rows: rows.map((row) => {
+                if (
+                    Array.isArray(row.values) &&
+                    row.values.length > 0 &&
+                    (typeof row.values[0] !== "object" || row.values[0] === null)
+                ) {
+                    return {
+                        values: columns.map(
+                            (_, columnIndex) => String(row.values?.[columnIndex] ?? ""),
+                        ),
+                    };
+                }
+
                 const valuesByColumn = new Map(
                     (row.values ?? []).map((value) => [
                         value.product_spec_column_id ?? value.column?.id,
@@ -1526,26 +1538,33 @@ function ProductModal({
 }) {
     const [form, setForm] = useState(emptyProductForm());
     const [loading, setLoading] = useState(false);
+    const [loadedProductId, setLoadedProductId] = useState(null);
     const [saving, setSaving] = useState(false);
 
     useEffect(() => {
         if (!open) {
+            setLoading(false);
+            setLoadedProductId(null);
             return;
         }
 
         if (!productId) {
             setForm(emptyProductForm());
+            setLoadedProductId("new");
+            setLoading(false);
             return;
         }
 
         let active = true;
         setLoading(true);
+        setLoadedProductId(null);
 
         axios
             .get(`/admin/api/products/${productId}`)
             .then((response) => {
                 if (active) {
                     setForm(mapProductDetails(response.data));
+                    setLoadedProductId(productId);
                 }
             })
             .catch(() => {
@@ -1564,6 +1583,9 @@ function ProductModal({
             active = false;
         };
     }, [open, productId]);
+
+    const waitingForProduct =
+        open && Boolean(productId) && loadedProductId !== productId;
 
     const filteredSubfamilies = useMemo(
         () =>
@@ -1705,7 +1727,7 @@ function ProductModal({
             title={form.id ? "Editar producto" : "Nuevo producto"}
             maxWidth="max-w-7xl"
         >
-            {loading ? (
+            {loading || waitingForProduct ? (
                 <div className="py-20 text-center text-sm text-slate-500">
                     Cargando producto...
                 </div>
@@ -2055,7 +2077,7 @@ function ProductModal({
                         </button>
                         <button
                             type="submit"
-                            disabled={saving}
+                            disabled={saving || loading || waitingForProduct}
                             className="rounded-2xl bg-[#25A7CA] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#1d96b8] disabled:opacity-60"
                         >
                             {saving ? "Guardando..." : form.id ? "Guardar cambios" : "Crear producto"}
@@ -2144,6 +2166,8 @@ export default function ProductsIndex({
                 media_id: mediaId,
                 sort_order: coverForm.sort_order || "A",
                 is_active: coverForm.is_active,
+                sync_field_values: false,
+                sync_items: false,
                 field_values: [],
                 items: [],
             });
@@ -2283,6 +2307,7 @@ export default function ProductsIndex({
             />
 
             <ProductModal
+                key={editingProductId ?? "new-product"}
                 open={productModalOpen}
                 productId={editingProductId}
                 families={families}

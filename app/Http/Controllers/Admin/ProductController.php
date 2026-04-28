@@ -35,7 +35,7 @@ class ProductController extends Controller
 
     public function show(int|string $id): JsonResponse
     {
-        return response()->json($this->findProduct($id));
+        return response()->json($this->serializeProduct($this->findProduct($id)));
     }
 
     public function store(Request $request): JsonResponse
@@ -51,7 +51,7 @@ class ProductController extends Controller
             return $product;
         });
 
-        return response()->json($this->findProduct($product->id), 201);
+        return response()->json($this->serializeProduct($this->findProduct($product->id)), 201);
     }
 
     public function update(Request $request, int|string $id): JsonResponse
@@ -66,7 +66,7 @@ class ProductController extends Controller
             $this->syncRelated($product, $validated['related_product_ids'] ?? []);
         });
 
-        return response()->json($this->findProduct($product->id));
+        return response()->json($this->serializeProduct($this->findProduct($product->id)));
     }
 
     public function destroy(int|string $id): JsonResponse
@@ -90,6 +90,70 @@ class ProductController extends Controller
                 'relatedProducts.mainMedia',
             ])
             ->findOrFail($id);
+    }
+
+    protected function serializeProduct(Product $product): array
+    {
+        return [
+            'id' => $product->id,
+            'product_family_id' => $product->product_family_id,
+            'product_subfamily_id' => $product->product_subfamily_id,
+            'name' => $product->name,
+            'slug' => $product->slug,
+            'sku' => $product->sku,
+            'short_description' => $product->short_description,
+            'description' => $product->description,
+            'material' => $product->material,
+            'treatment' => $product->treatment,
+            'observations' => $product->observations,
+            'main_media_id' => $product->main_media_id,
+            'technical_sheet_media_id' => $product->technical_sheet_media_id,
+            'sort_order' => $product->sort_order,
+            'is_active' => $product->is_active,
+            'is_featured_home' => $product->is_featured_home,
+            'is_featured_family' => $product->is_featured_family,
+            'main_media' => $product->mainMedia,
+            'technical_sheet' => $product->technicalSheet,
+            'media' => $product->media->map(fn (ProductMedia $item) => [
+                'id' => $item->id,
+                'media_id' => $item->media_id,
+                'sort_order' => $item->sort_order,
+                'is_primary' => $item->is_primary,
+                'media' => $item->media,
+            ])->values()->all(),
+            'related_products' => $product->relatedProducts->map(fn (Product $related) => [
+                'id' => $related->id,
+                'name' => $related->name,
+                'slug' => $related->slug,
+                'main_media' => $related->mainMedia,
+            ])->values()->all(),
+            'spec_tables' => $product->specTables->map(function (ProductSpecTable $table) {
+                $columns = $table->columns->sortBy('sort_order')->values();
+
+                return [
+                    'id' => $table->id,
+                    'title' => $table->title,
+                    'sort_order' => $table->sort_order,
+                    'columns' => $columns->map(fn (ProductSpecColumn $column) => [
+                        'id' => $column->id,
+                        'label' => $column->label,
+                        'unit' => $column->unit,
+                        'sort_order' => $column->sort_order,
+                    ])->values()->all(),
+                    'rows' => $table->rows->sortBy('sort_order')->values()->map(function (ProductSpecRow $row) use ($columns) {
+                        $valuesByColumn = $row->values->keyBy('product_spec_column_id');
+
+                        return [
+                            'id' => $row->id,
+                            'sort_order' => $row->sort_order,
+                            'values' => $columns->map(
+                                fn (ProductSpecColumn $column) => (string) optional($valuesByColumn->get($column->id))->value
+                            )->all(),
+                        ];
+                    })->all(),
+                ];
+            })->values()->all(),
+        ];
     }
 
     protected function rules(?int $ignoreId = null): array

@@ -198,6 +198,8 @@ export default function QualityIndex({
                 media_id: mediaId,
                 sort_order: heroForm.sort_order || "A",
                 is_active: heroForm.is_active,
+                sync_field_values: false,
+                sync_items: false,
                 field_values: [],
                 items: [],
             });
@@ -248,6 +250,8 @@ export default function QualityIndex({
                     policyForm.media_type === "video" ? secondaryMediaId : null,
                 sort_order: policyForm.sort_order || "B",
                 is_active: policyForm.is_active,
+                sync_field_values: true,
+                sync_items: false,
                 field_values: [
                     {
                         id: policyForm.media_type_field_id,
@@ -326,6 +330,8 @@ export default function QualityIndex({
                 title: logosForm.title || null,
                 sort_order: logosForm.sort_order || "C",
                 is_active: logosForm.is_active,
+                sync_field_values: false,
+                sync_items: true,
                 field_values: [],
                 items,
             });

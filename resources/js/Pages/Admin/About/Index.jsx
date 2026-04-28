@@ -280,6 +280,8 @@ export default function AboutIndex({ sections, publicAboutUrl }) {
                 media_id: heroMediaId,
                 sort_order: form.hero.sort_order,
                 is_active: form.hero.is_active,
+                sync_field_values: false,
+                sync_items: false,
                 field_values: [],
                 items: [],
             });
@@ -292,6 +294,8 @@ export default function AboutIndex({ sections, publicAboutUrl }) {
                 media_id: introMediaId,
                 sort_order: form.intro.sort_order,
                 is_active: form.intro.is_active,
+                sync_field_values: false,
+                sync_items: false,
                 field_values: [],
                 items: [],
             });
@@ -304,6 +308,8 @@ export default function AboutIndex({ sections, publicAboutUrl }) {
                 media_id: null,
                 sort_order: form.missionVision.sort_order,
                 is_active: form.missionVision.is_active,
+                sync_field_values: false,
+                sync_items: true,
                 field_values: [],
                 items: form.missionVision.items.map((item, index) => ({
                     id: item.id,
@@ -324,6 +330,8 @@ export default function AboutIndex({ sections, publicAboutUrl }) {
                 media_id: null,
                 sort_order: form.values.sort_order,
                 is_active: form.values.is_active,
+                sync_field_values: false,
+                sync_items: true,
                 field_values: [],
                 items: form.values.items.map((item, index) => ({
                     id: item.id,
@@ -373,6 +381,8 @@ export default function AboutIndex({ sections, publicAboutUrl }) {
                 media_id: null,
                 sort_order: form.memberships.sort_order,
                 is_active: form.memberships.is_active,
+                sync_field_values: false,
+                sync_items: true,
                 field_values: [],
                 items: membershipItems,
             });

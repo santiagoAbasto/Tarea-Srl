@@ -39,8 +39,12 @@ class SiteSectionController extends Controller
 
         $section = DB::transaction(function () use ($validated) {
             $section = SiteSection::create($this->sectionPayload($validated));
-            $this->syncFieldValues($section, $validated['field_values'] ?? []);
-            $this->syncItems($section, $validated['items'] ?? []);
+            if ($this->shouldSyncCollection($validated, 'field_values', 'sync_field_values')) {
+                $this->syncFieldValues($section, $validated['field_values'] ?? []);
+            }
+            if ($this->shouldSyncCollection($validated, 'items', 'sync_items')) {
+                $this->syncItems($section, $validated['items'] ?? []);
+            }
 
             return $section;
         });
@@ -55,8 +59,12 @@ class SiteSectionController extends Controller
 
         DB::transaction(function () use ($section, $validated) {
             $section->fill($this->sectionPayload($validated, $section))->save();
-            $this->syncFieldValues($section, $validated['field_values'] ?? []);
-            $this->syncItems($section, $validated['items'] ?? []);
+            if ($this->shouldSyncCollection($validated, 'field_values', 'sync_field_values')) {
+                $this->syncFieldValues($section, $validated['field_values'] ?? []);
+            }
+            if ($this->shouldSyncCollection($validated, 'items', 'sync_items')) {
+                $this->syncItems($section, $validated['items'] ?? []);
+            }
         });
 
         return response()->json($section->fresh(['fieldValues', 'items.media']));
@@ -84,6 +92,8 @@ class SiteSectionController extends Controller
             'meta_json' => ['nullable', 'array'],
             'sort_order' => ['nullable'],
             'is_active' => ['nullable', 'boolean'],
+            'sync_field_values' => ['nullable', 'boolean'],
+            'sync_items' => ['nullable', 'boolean'],
             'field_values' => ['nullable', 'array'],
             'field_values.*.id' => ['nullable', 'integer'],
             'field_values.*.field_key' => ['required', 'string', 'max:100'],
@@ -196,5 +206,18 @@ class SiteSectionController extends Controller
         }
 
         $section->items()->whereNotIn('id', $keptIds)->delete();
+    }
+
+    protected function shouldSyncCollection(array $validated, string $rowsKey, string $flagKey): bool
+    {
+        if (($validated[$flagKey] ?? false) === true) {
+            return true;
+        }
+
+        if (! array_key_exists($rowsKey, $validated)) {
+            return false;
+        }
+
+        return is_array($validated[$rowsKey]) && count($validated[$rowsKey]) > 0;
     }
 }

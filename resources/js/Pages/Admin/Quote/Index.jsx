@@ -222,6 +222,8 @@ export default function QuoteIndex({
                 media_id: mediaId,
                 sort_order: heroForm.sort_order || "A",
                 is_active: heroForm.is_active,
+                sync_field_values: false,
+                sync_items: false,
                 field_values: [],
                 items: [],
             });
@@ -250,6 +252,8 @@ export default function QuoteIndex({
                 subtitle: contentForm.subtitle || null,
                 sort_order: contentForm.sort_order || "B",
                 is_active: contentForm.is_active,
+                sync_field_values: true,
+                sync_items: false,
                 field_values: FIELD_DEFINITIONS.map((field) => ({
                     ...contentForm.fields[field.key],
                     field_key: field.key,

@@ -106,6 +106,8 @@ export default function HomeRepresentativesIndex({
                 button_url: null,
                 sort_order: sectionForm.sort_order || "A",
                 is_active: sectionForm.is_active,
+                sync_field_values: false,
+                sync_items: false,
                 field_values: [],
                 items: [],
             });

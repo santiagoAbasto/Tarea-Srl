@@ -193,6 +193,8 @@ export default function ContactsIndex({
                 media_id: mediaId,
                 sort_order: "A",
                 is_active: heroForm.is_active,
+                sync_field_values: false,
+                sync_items: false,
                 field_values: [],
                 items: [],
             });

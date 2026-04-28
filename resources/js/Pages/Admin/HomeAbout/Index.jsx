@@ -166,6 +166,8 @@ export default function HomeAboutIndex({ section, publicHomeUrl }) {
                 button_url: form.button_url || null,
                 sort_order: form.sort_order || "C",
                 is_active: form.is_active,
+                sync_field_values: false,
+                sync_items: false,
                 field_values: [],
                 items: [],
             };
