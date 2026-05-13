@@ -230,6 +230,16 @@
         padding: 40px 0;
     }
 
+    .section--home-products .section__header {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .section--home-products .section__button {
+        align-self: center;
+    }
+
     .section--home-products .section__title {
         font-size: 20px;
     }

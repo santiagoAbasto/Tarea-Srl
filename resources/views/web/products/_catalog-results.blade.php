@@ -33,6 +33,13 @@
                         @if($product->mainMedia)
                             <img src="{{ media_asset_url($product->mainMedia) }}" alt="{{ $product->name }}">
                         @endif
+                        @if($product->brandLogoMedia)
+                            <span
+                                class="products-catalog__brand-logo"
+                                aria-hidden="true"
+                                style="background-image: url('{{ media_asset_url($product->brandLogoMedia) }}');"
+                            ></span>
+                        @endif
                     </div>
                     <div class="products-catalog__tile-body">
                         <span class="products-catalog__eyebrow {{ $eyebrowClass }}" style="color: {{ $eyebrowColor }};">

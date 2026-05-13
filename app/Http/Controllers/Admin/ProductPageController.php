@@ -83,7 +83,7 @@ class ProductPageController extends Controller
                 ])
                 ->values(),
             'products' => Product::query()
-                ->with(['family', 'subfamily', 'mainMedia'])
+                ->with(['family', 'subfamily', 'mainMedia', 'brandLogoMedia'])
                 ->withCount(['media', 'specTables', 'relatedProducts'])
                 ->orderBy('sort_order')
                 ->get()
@@ -102,6 +102,8 @@ class ProductPageController extends Controller
                     'observations' => $product->observations,
                     'main_media_id' => $product->main_media_id,
                     'main_media_url' => media_asset_url($product->mainMedia),
+                    'brand_logo_media_id' => $product->brand_logo_media_id,
+                    'brand_logo_media_url' => media_asset_url($product->brandLogoMedia),
                     'sort_order' => $product->sort_order,
                     'is_active' => $product->is_active,
                     'is_featured_home' => $product->is_featured_home,

@@ -20,8 +20,8 @@ return [
     ],
     'uploads' => [
         'page_media' => [
-            'image_max_kb' => (int) env('PAGE_MEDIA_IMAGE_MAX_KB', 5120),
-            'video_max_kb' => (int) env('PAGE_MEDIA_VIDEO_MAX_KB', 20480),
+            'image_max_kb' => (int) env('PAGE_MEDIA_IMAGE_MAX_KB', 20480),
+            'video_max_kb' => (int) env('PAGE_MEDIA_VIDEO_MAX_KB', 102400),
             'image_mimes' => ['jpg', 'jpeg', 'png', 'webp', 'gif'],
             'image_mimetypes' => ['image/jpeg', 'image/png', 'image/webp', 'image/gif'],
             'document_mimes' => ['pdf'],

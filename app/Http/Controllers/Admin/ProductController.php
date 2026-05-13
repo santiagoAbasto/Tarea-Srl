@@ -23,7 +23,7 @@ class ProductController extends Controller
     public function index(Request $request): JsonResponse
     {
         $products = Product::query()
-            ->with(['family', 'subfamily', 'mainMedia', 'technicalSheet'])
+            ->with(['family', 'subfamily', 'mainMedia', 'brandLogoMedia', 'technicalSheet'])
             ->when($request->filled('product_family_id'), fn (Builder $query) => $query->where('product_family_id', $request->integer('product_family_id')))
             ->when($request->filled('product_subfamily_id'), fn (Builder $query) => $query->where('product_subfamily_id', $request->integer('product_subfamily_id')))
             ->orderBy('sort_order')
@@ -83,6 +83,7 @@ class ProductController extends Controller
                 'family',
                 'subfamily',
                 'mainMedia',
+                'brandLogoMedia',
                 'technicalSheet',
                 'media.media',
                 'specTables.columns',
@@ -107,12 +108,14 @@ class ProductController extends Controller
             'treatment' => $product->treatment,
             'observations' => $product->observations,
             'main_media_id' => $product->main_media_id,
+            'brand_logo_media_id' => $product->brand_logo_media_id,
             'technical_sheet_media_id' => $product->technical_sheet_media_id,
             'sort_order' => $product->sort_order,
             'is_active' => $product->is_active,
             'is_featured_home' => $product->is_featured_home,
             'is_featured_family' => $product->is_featured_family,
             'main_media' => $product->mainMedia,
+            'brand_logo_media' => $product->brandLogoMedia,
             'technical_sheet' => $product->technicalSheet,
             'media' => $product->media->map(fn (ProductMedia $item) => [
                 'id' => $item->id,
@@ -170,6 +173,7 @@ class ProductController extends Controller
             'treatment' => ['nullable', 'string'],
             'observations' => ['nullable', 'string'],
             'main_media_id' => ['nullable', 'integer', 'exists:media_assets,id'],
+            'brand_logo_media_id' => ['nullable', 'integer', 'exists:media_assets,id'],
             'technical_sheet_media_id' => ['nullable', 'integer', 'exists:media_assets,id'],
             'sort_order' => ['nullable'],
             'is_active' => ['nullable', 'boolean'],
@@ -219,6 +223,7 @@ class ProductController extends Controller
             'treatment',
             'observations',
             'main_media_id',
+            'brand_logo_media_id',
             'technical_sheet_media_id',
             'sort_order',
             'is_active',

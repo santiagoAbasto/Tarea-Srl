@@ -31,16 +31,42 @@ class MediaAssetController extends Controller
     {
         $allowedExtensions = implode(',', CmsSecurity::mediaLibraryExtensions());
         $allowedMimeTypes = implode(',', CmsSecurity::mediaLibraryMimeTypes());
+        $maxUploadKilobytes = $this->resolveUploadMaxKilobytes($request);
 
         return [
             'type' => ['required_without:file', 'string', 'max:20', 'in:image,video,file'],
-            'file' => ['nullable', 'file', 'mimes:'.$allowedExtensions, 'mimetypes:'.$allowedMimeTypes, 'max:51200'],
+            'file' => ['nullable', 'file', 'mimes:'.$allowedExtensions, 'mimetypes:'.$allowedMimeTypes, 'max:'.$maxUploadKilobytes],
             'title' => ['nullable', 'string', 'max:255'],
             'alt_text' => ['nullable', 'string', 'max:255'],
             'disk' => ['nullable', 'string', 'in:public'],
             'path' => ['nullable', 'string', 'max:255'],
             'meta_json' => ['nullable', 'array'],
         ];
+    }
+
+    protected function resolveUploadMaxKilobytes(Request $request): int
+    {
+        $imageMaxKb = (int) config('security.uploads.page_media.image_max_kb', 20480);
+        $videoMaxKb = (int) config('security.uploads.page_media.video_max_kb', 102400);
+        $type = (string) $request->input('type', '');
+
+        if ($request->hasFile('file')) {
+            $mimeType = (string) ($request->file('file')?->getMimeType() ?? '');
+
+            if (str_starts_with($mimeType, 'video/')) {
+                return $videoMaxKb;
+            }
+
+            if (str_starts_with($mimeType, 'image/')) {
+                return $imageMaxKb;
+            }
+        }
+
+        return match ($type) {
+            'image' => $imageMaxKb,
+            'video' => $videoMaxKb,
+            default => max($imageMaxKb, $videoMaxKb),
+        };
     }
 
     protected function updateRules(Request $request, \Illuminate\Database\Eloquent\Model $model): array

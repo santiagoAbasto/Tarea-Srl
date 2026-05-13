@@ -6,6 +6,13 @@ import { Icon } from "@iconify/react";
 import axios from "axios";
 import { useMemo, useState } from "react";
 
+const LOGO_GUIDE = {
+    title: "Logo para marcas destacadas",
+    detail: "Usá un logo de 113 x 64 px.",
+    limit: "Peso máximo: 5 MB.",
+    note: "Si mantenés esa proporción, los logos se van a ver más prolijos en la portada.",
+};
+
 function normalizeSort(value, fallback) {
     const next = (value || "").toString().trim().toUpperCase();
     return next || fallback;
@@ -137,12 +144,12 @@ export default function HomeRepresentativesIndex({
             );
 
             emitAdminToast(
-                "Los representantes exclusivos de la home se actualizaron correctamente.",
+                "Las marcas destacadas de la portada se actualizaron correctamente.",
             );
         } catch (error) {
             emitAdminToast(
                 error?.response?.data?.message ||
-                    "No se pudieron guardar los representantes exclusivos.",
+                    "No se pudieron guardar las marcas destacadas.",
                 "error",
             );
         } finally {
@@ -152,7 +159,7 @@ export default function HomeRepresentativesIndex({
 
     return (
         <AdminLayout>
-            <Head title="Representantes exclusivos Home" />
+            <Head title="Marcas destacadas en portada" />
 
             <div className="space-y-6">
                 <section className="overflow-hidden rounded-[32px] border border-slate-200 bg-white shadow-sm">
@@ -161,14 +168,14 @@ export default function HomeRepresentativesIndex({
                             <div className="max-w-3xl">
                                 <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-[#25A7CA]/20 bg-[#25A7CA]/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-[#117a98]">
                                     <Icon icon="solar:users-group-two-rounded-outline" width={14} />
-                                    Home / Representantes exclusivos
+                                    Portada / Marcas destacadas
                                 </div>
                                 <h1 className="text-3xl font-semibold tracking-tight text-slate-900 md:text-4xl">
-                                    Representantes exclusivos home
+                                    Marcas destacadas
                                 </h1>
                                 <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-600">
-                                    Editá el título del bloque y definí qué
-                                    representadas aparecen en la home pública.
+                                    Acá elegís qué marcas se muestran en la
+                                    portada del sitio y en qué orden aparecen.
                                 </p>
                             </div>
 
@@ -178,7 +185,7 @@ export default function HomeRepresentativesIndex({
                                 className="inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700 transition hover:border-[#25A7CA] hover:text-[#117a98]"
                             >
                                 <Icon icon="solar:square-arrow-right-up-outline" width={18} />
-                                Ver home pública
+                                Ver sitio público
                             </button>
                         </div>
                     </div>
@@ -199,8 +206,8 @@ export default function HomeRepresentativesIndex({
                                 Editar bloque
                             </h2>
                             <p className="mt-2 text-sm text-slate-500">
-                                Controlá el título y la visibilidad de cada logo en
-                                la franja de representadas.
+                                Acá podés cambiar el título del bloque y decidir
+                                qué logos se muestran en la portada.
                             </p>
                         </div>
 
@@ -269,8 +276,42 @@ export default function HomeRepresentativesIndex({
                                     </h3>
                                     <p className="mt-1 text-xs text-slate-500">
                                         Activá las marcas que querés mostrar en la
-                                        home y definí su orden.
+                                        portada y definí su orden.
                                     </p>
+                                </div>
+
+                                <div className="mb-4 overflow-hidden rounded-[24px] border border-[#25A7CA]/20 bg-[linear-gradient(135deg,rgba(37,167,202,0.18),rgba(255,255,255,0.98))] shadow-[0_18px_45px_rgba(37,167,202,0.12)]">
+                                    <div className="flex flex-col gap-4 p-4 md:flex-row md:items-center md:justify-between">
+                                        <div className="flex items-start gap-3">
+                                            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-white text-[#117a98] shadow-sm">
+                                                <Icon icon="solar:gallery-outline" width={22} />
+                                            </div>
+                                            <div>
+                                                <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#117a98]">
+                                                    Recomendación importante
+                                                </p>
+                                                <h3 className="mt-1 text-base font-semibold text-slate-900">
+                                                    {LOGO_GUIDE.title}
+                                                </h3>
+                                                <p className="mt-2 text-sm font-medium text-slate-700">
+                                                    {LOGO_GUIDE.detail}
+                                                </p>
+                                                <p className="mt-1 text-sm font-semibold text-slate-900">
+                                                    {LOGO_GUIDE.limit}
+                                                </p>
+                                                <p className="mt-2 text-sm text-slate-600">
+                                                    {LOGO_GUIDE.note}
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        <div className="rounded-2xl border border-white/70 bg-white/85 px-4 py-3 text-sm font-semibold text-slate-700 shadow-sm">
+                                            Tamaño recomendado
+                                            <div className="mt-1 text-lg font-bold text-[#117a98]">
+                                                113 x 64 px
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
 
                                 <div className="space-y-3">
@@ -318,7 +359,7 @@ export default function HomeRepresentativesIndex({
                                                                 }
                                                                 className="h-4 w-4 rounded border-slate-300 text-[#25A7CA] focus:ring-[#25A7CA]"
                                                             />
-                                                            Mostrar en home
+                                                            Mostrar en portada
                                                         </label>
 
                                                         <label className="inline-flex items-center gap-3 text-sm text-slate-700">

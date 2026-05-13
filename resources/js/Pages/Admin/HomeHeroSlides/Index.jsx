@@ -6,6 +6,23 @@ import { Icon } from "@iconify/react";
 import axios from "axios";
 import { useEffect, useState } from "react";
 
+const HERO_MEDIA_GUIDE = {
+    image: {
+        title: "Imagen para banner",
+        detail: "Usá una imagen de 1366 x 768 px.",
+        limit: "Peso máximo: 20 MB.",
+        note: "Si respetás esa medida, el banner se va a ver mucho mejor.",
+        icon: "solar:gallery-outline",
+    },
+    video: {
+        title: "Video para banner",
+        detail: "Usá un video de 1366 x 768 px.",
+        limit: "Peso máximo: 100 MB.",
+        note: "Con ese tamaño el banner mantiene una vista más limpia y ordenada.",
+        icon: "solar:playback-speed-outline",
+    },
+};
+
 function buildYouTubeEmbed(url) {
     const clean = (url || "").trim();
 
@@ -100,7 +117,7 @@ function SlidePreview({ slide, previewMedia }) {
                     {previewMedia.type === "youtube" && previewMedia.url ? (
                         <iframe
                             src={previewMedia.url}
-                            title={slide.alt_text || slide.title || "Preview del slide"}
+                            title={slide.alt_text || slide.title || "Vista previa del banner"}
                             className="h-full w-full object-cover"
                             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                             allowFullScreen
@@ -122,7 +139,7 @@ function SlidePreview({ slide, previewMedia }) {
                     {previewMedia.type === "image" && previewMedia.url ? (
                         <img
                             src={previewMedia.url}
-                            alt={slide.alt_text || slide.title || "Preview del slide"}
+                            alt={slide.alt_text || slide.title || "Vista previa del banner"}
                             className="h-full w-full object-cover"
                         />
                     ) : null}
@@ -131,11 +148,11 @@ function SlidePreview({ slide, previewMedia }) {
                         <div className="flex h-full items-center justify-center bg-[radial-gradient(circle_at_top_left,rgba(37,167,202,0.22),transparent_38%),linear-gradient(135deg,#0f172a_0%,#111827_55%,#1f2937_100%)] text-slate-200">
                             <div className="max-w-sm px-8 text-center">
                                 <p className="text-xs font-semibold uppercase tracking-[0.24em] text-cyan-200">
-                                    Preview
+                                    Vista previa
                                 </p>
                                 <p className="mt-4 text-sm leading-6 text-slate-300">
                                     Cargá una imagen, video o URL de YouTube para ver
-                                    el resultado del hero.
+                                    el resultado del banner.
                                 </p>
                             </div>
                         </div>
@@ -186,6 +203,10 @@ export default function HomeHeroSlidesIndex({ slides: initialSlides, publicHomeU
     const selectedSlide =
         slides.find((slide) => slide.id === selectedId) ?? null;
     const previewMedia = getSlidePreviewMedia(form, selectedSlide, filePreviewUrl);
+    const selectedMediaGuide =
+        form.media_type === "video"
+            ? HERO_MEDIA_GUIDE.video
+            : HERO_MEDIA_GUIDE.image;
 
     useEffect(() => {
         if (!form.desktop_file) {
@@ -221,7 +242,7 @@ export default function HomeHeroSlidesIndex({ slides: initialSlides, publicHomeU
     const uploadMediaAsset = async () => {
         if (form.media_type === "youtube") {
             if (!form.youtube_url.trim()) {
-                throw new Error("Ingresá una URL de YouTube para el slide.");
+                throw new Error("Ingresá una URL de YouTube para el banner.");
             }
 
             const youtubeEmbed = buildYouTubeEmbed(form.youtube_url);
@@ -249,7 +270,7 @@ export default function HomeHeroSlidesIndex({ slides: initialSlides, publicHomeU
             selectedSlide.media_type === form.media_type;
 
         if (!form.desktop_file && !canReuseExistingMedia) {
-            throw new Error("Cargá una imagen o video para el slide.");
+            throw new Error("Cargá una imagen o video para el banner.");
         }
 
         if (!form.desktop_file) {
@@ -258,6 +279,7 @@ export default function HomeHeroSlidesIndex({ slides: initialSlides, publicHomeU
 
         const payload = new FormData();
         payload.append("file", form.desktop_file);
+        payload.append("type", form.media_type);
         payload.append("title", form.title || "Slide Home");
         payload.append("alt_text", form.alt_text || "");
 
@@ -322,8 +344,8 @@ export default function HomeHeroSlidesIndex({ slides: initialSlides, publicHomeU
 
             emitAdminToast(
                 form.id
-                    ? "El slide se actualizó correctamente."
-                    : "El slide se creó correctamente.",
+                    ? "El banner se actualizó correctamente."
+                    : "El banner se creó correctamente.",
             );
         } catch (error) {
             if (error?.response?.status === 422) {
@@ -333,7 +355,7 @@ export default function HomeHeroSlidesIndex({ slides: initialSlides, publicHomeU
             emitAdminToast(
                 error?.response?.data?.message ||
                     error?.message ||
-                    "No se pudo guardar el slide.",
+                    "No se pudo guardar el banner.",
                 "error",
             );
         } finally {
@@ -345,7 +367,7 @@ export default function HomeHeroSlidesIndex({ slides: initialSlides, publicHomeU
         if (!form.id || deleting) return;
 
         const confirmed = window.confirm(
-            "¿Querés eliminar este slide del hero principal?",
+            "¿Querés eliminar este banner principal?",
         );
 
         if (!confirmed) return;
@@ -364,11 +386,11 @@ export default function HomeHeroSlidesIndex({ slides: initialSlides, publicHomeU
                 startNewSlide();
             }
 
-            emitAdminToast("El slide se eliminó correctamente.");
+            emitAdminToast("El banner se eliminó correctamente.");
         } catch (error) {
             emitAdminToast(
                 error?.response?.data?.message ||
-                    "No se pudo eliminar el slide.",
+                    "No se pudo eliminar el banner.",
                 "error",
             );
         } finally {
@@ -378,7 +400,7 @@ export default function HomeHeroSlidesIndex({ slides: initialSlides, publicHomeU
 
     return (
         <AdminLayout>
-            <Head title="Home Sliders" />
+            <Head title="Banners de la portada" />
 
             <div className="space-y-6">
                 <section className="overflow-hidden rounded-[32px] border border-slate-200 bg-white shadow-sm">
@@ -387,16 +409,16 @@ export default function HomeHeroSlidesIndex({ slides: initialSlides, publicHomeU
                             <div className="max-w-3xl">
                                 <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-[#25A7CA]/20 bg-[#25A7CA]/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-[#117a98]">
                                     <Icon icon="solar:gallery-wide-outline" width={14} />
-                                    Home / Sliders
+                                    Portada / Banners
                                 </div>
                                 <h1 className="text-3xl font-semibold tracking-tight text-slate-900 md:text-4xl">
-                                    Hero principal de la web
+                                    Banners de la portada
                                 </h1>
                                 <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-600">
-                                    Acá administramos exactamente el slider que se
-                                    muestra en la home pública. Podés crear nuevos
-                                    slides con imagen, video local o video embebido
-                                    de YouTube y mantener el mismo look del sitio.
+                                    Acá podés cambiar las imágenes y videos
+                                    grandes que aparecen al entrar al sitio.
+                                    También podés agregar nuevos banners y elegir
+                                    el contenido que querés mostrar.
                                 </p>
                             </div>
 
@@ -407,7 +429,7 @@ export default function HomeHeroSlidesIndex({ slides: initialSlides, publicHomeU
                                     className="inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700 transition hover:border-[#25A7CA] hover:text-[#117a98]"
                                 >
                                     <Icon icon="solar:square-arrow-right-up-outline" width={18} />
-                                    Ver home pública
+                                    Ver sitio público
                                 </button>
                                 <button
                                     type="button"
@@ -415,7 +437,7 @@ export default function HomeHeroSlidesIndex({ slides: initialSlides, publicHomeU
                                     className="inline-flex items-center gap-2 rounded-2xl bg-[#25A7CA] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#1d96b8]"
                                 >
                                     <Icon icon="solar:add-circle-outline" width={18} />
-                                    Nuevo slider
+                                    Nuevo banner
                                 </button>
                             </div>
                         </div>
@@ -428,10 +450,11 @@ export default function HomeHeroSlidesIndex({ slides: initialSlides, publicHomeU
                             <div className="mb-4 flex items-center justify-between">
                                 <div>
                                     <h2 className="text-lg font-semibold text-slate-900">
-                                        Sliders actuales
+                                        Banners actuales
                                     </h2>
                                     <p className="mt-1 text-sm text-slate-500">
-                                        Tomamos lo que hoy ya existe en la home.
+                                        Esto es lo que hoy ve la gente al entrar
+                                        al sitio.
                                     </p>
                                 </div>
                                 <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">
@@ -479,7 +502,7 @@ export default function HomeHeroSlidesIndex({ slides: initialSlides, publicHomeU
                                                     <div className="flex items-center gap-2">
                                                         <p className="truncate text-sm font-semibold text-slate-900">
                                                             {slide.title ||
-                                                                "Slide sin título"}
+                                                                "Banner sin título"}
                                                         </p>
                                                         {!slide.is_active ? (
                                                             <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[11px] font-semibold text-amber-700">
@@ -488,8 +511,7 @@ export default function HomeHeroSlidesIndex({ slides: initialSlides, publicHomeU
                                                         ) : null}
                                                     </div>
                                                     <p className="mt-1 text-xs uppercase tracking-[0.16em] text-slate-400">
-                                                        {mediaLabel} · Orden{" "}
-                                                        {slide.sort_order || "-"}
+                                                        {mediaLabel}
                                                     </p>
                                                     <p className="mt-2 line-clamp-2 text-xs leading-5 text-slate-500">
                                                         {slide.description ||
@@ -503,7 +525,7 @@ export default function HomeHeroSlidesIndex({ slides: initialSlides, publicHomeU
 
                                 {slides.length === 0 ? (
                                     <div className="rounded-[24px] border border-dashed border-slate-300 bg-slate-50 px-4 py-6 text-center text-sm text-slate-500">
-                                        Todavía no hay slides cargados.
+                                        Todavía no hay banners cargados.
                                     </div>
                                 ) : null}
                             </div>
@@ -521,13 +543,13 @@ export default function HomeHeroSlidesIndex({ slides: initialSlides, publicHomeU
                                 <div>
                                     <h2 className="text-xl font-semibold text-slate-900">
                                         {form.id
-                                            ? "Editar slider"
-                                            : "Crear nuevo slider"}
+                                            ? "Editar banner"
+                                            : "Crear nuevo banner"}
                                     </h2>
                                     <p className="mt-2 max-w-2xl text-sm text-slate-500">
-                                        El preview respeta el estilo del hero
-                                        público actual para que el resultado sea
-                                        fiel antes de guardar.
+                                        La vista previa respeta el estilo actual
+                                        de la portada para que puedas revisar el
+                                        resultado antes de guardar.
                                     </p>
                                 </div>
 
@@ -626,7 +648,7 @@ export default function HomeHeroSlidesIndex({ slides: initialSlides, publicHomeU
 
                                 <div>
                                     <label className="mb-2 block text-sm font-semibold text-slate-800">
-                                        Tipo de slide
+                                        Tipo de banner
                                     </label>
                                     <select
                                         value={form.media_type}
@@ -641,7 +663,7 @@ export default function HomeHeroSlidesIndex({ slides: initialSlides, publicHomeU
                                         <option value="image">Imagen</option>
                                         <option value="video">Video local</option>
                                         <option value="youtube">
-                                            Video embebido de YouTube
+                                            Video de YouTube
                                         </option>
                                     </select>
                                 </div>
@@ -720,22 +742,61 @@ export default function HomeHeroSlidesIndex({ slides: initialSlides, publicHomeU
                                                 placeholder="https://www.youtube.com/watch?v=..."
                                             />
                                         ) : (
-                                            <input
-                                                type="file"
-                                                accept={
-                                                    form.media_type === "video"
-                                                        ? "video/*"
-                                                        : "image/*"
-                                                }
-                                                onChange={(event) =>
-                                                    updateForm(
-                                                        "desktop_file",
-                                                        event.target.files?.[0] ??
-                                                            null,
-                                                    )
-                                                }
-                                                className="block w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 file:mr-4 file:rounded-xl file:border-0 file:bg-[#25A7CA]/10 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-[#117a98] hover:file:bg-[#25A7CA]/15"
-                                            />
+                                            <>
+                                                <div className="mb-4 overflow-hidden rounded-[24px] border border-[#25A7CA]/20 bg-[linear-gradient(135deg,rgba(37,167,202,0.18),rgba(255,255,255,0.98))] shadow-[0_18px_45px_rgba(37,167,202,0.12)]">
+                                                    <div className="flex flex-col gap-4 p-4 md:flex-row md:items-center md:justify-between">
+                                                        <div className="flex items-start gap-3">
+                                                            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-white text-[#117a98] shadow-sm">
+                                                                <Icon
+                                                                    icon={selectedMediaGuide.icon}
+                                                                    width={22}
+                                                                />
+                                                            </div>
+                                                            <div>
+                                                                <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#117a98]">
+                                                                    Recomendación importante
+                                                                </p>
+                                                                <h3 className="mt-1 text-base font-semibold text-slate-900">
+                                                                    {selectedMediaGuide.title}
+                                                                </h3>
+                                                                <p className="mt-2 text-sm font-medium text-slate-700">
+                                                                    {selectedMediaGuide.detail}
+                                                                </p>
+                                                                <p className="mt-1 text-sm font-semibold text-slate-900">
+                                                                    {selectedMediaGuide.limit}
+                                                                </p>
+                                                                <p className="mt-2 text-sm text-slate-600">
+                                                                    {selectedMediaGuide.note}
+                                                                </p>
+                                                            </div>
+                                                        </div>
+
+                                                        <div className="rounded-2xl border border-white/70 bg-white/85 px-4 py-3 text-sm font-semibold text-slate-700 shadow-sm">
+                                                            Tamaño recomendado
+                                                            <div className="mt-1 text-lg font-bold text-[#117a98]">
+                                                                1366 x 768 px
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <input
+                                                    type="file"
+                                                    accept={
+                                                        form.media_type === "video"
+                                                            ? "video/*"
+                                                            : "image/*"
+                                                    }
+                                                    onChange={(event) =>
+                                                        updateForm(
+                                                            "desktop_file",
+                                                            event.target.files?.[0] ??
+                                                                null,
+                                                        )
+                                                    }
+                                                    className="block w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 file:mr-4 file:rounded-xl file:border-0 file:bg-[#25A7CA]/10 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-[#117a98] hover:file:bg-[#25A7CA]/15"
+                                                />
+                                            </>
                                         )}
 
                                         <div className="mt-3 grid gap-3 text-sm text-slate-500 md:grid-cols-2">
@@ -766,7 +827,7 @@ export default function HomeHeroSlidesIndex({ slides: initialSlides, publicHomeU
                                             }
                                             className="h-4 w-4 rounded border-slate-300 text-[#25A7CA] focus:ring-[#25A7CA]"
                                         />
-                                        Slide activo en la home
+                                        Banner activo en la página de inicio
                                     </label>
                                 </div>
                             </div>
@@ -782,7 +843,7 @@ export default function HomeHeroSlidesIndex({ slides: initialSlides, publicHomeU
                                         ? "Guardando..."
                                         : form.id
                                           ? "Guardar cambios"
-                                          : "Crear slider"}
+                                          : "Crear banner"}
                                 </button>
 
                                 <button
@@ -801,7 +862,7 @@ export default function HomeHeroSlidesIndex({ slides: initialSlides, publicHomeU
 
             <PublicPreviewModal
                 open={previewOpen}
-                title="Home pública"
+                title="Inicio público"
                 url={publicHomeUrl}
                 onClose={() => setPreviewOpen(false)}
             />

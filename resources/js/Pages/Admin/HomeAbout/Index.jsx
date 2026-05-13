@@ -7,6 +7,13 @@ import { Icon } from "@iconify/react";
 import axios from "axios";
 import { useEffect, useState } from "react";
 
+const ABOUT_IMAGE_GUIDE = {
+    title: "Imagen del bloque sobre la empresa",
+    detail: "Usá una imagen de 673 x 601 px.",
+    limit: "Peso máximo: 20 MB.",
+    note: "Si respetás esa medida, la imagen se va a ver mejor en la portada.",
+};
+
 function looksLikeHtml(value) {
     return /<[^>]+>/.test(String(value || ""));
 }
@@ -68,11 +75,11 @@ function HomeAboutPreview({ form, previewUrl }) {
                             <div className="flex h-full min-h-[320px] items-center justify-center bg-[radial-gradient(circle_at_top_left,rgba(143,216,248,.22),transparent_42%),linear-gradient(135deg,#0d4d7c_0%,#093E66_100%)] px-8 text-center text-slate-200">
                                 <div>
                                     <p className="text-xs font-semibold uppercase tracking-[0.24em] text-cyan-100">
-                                        Preview
+                                        Vista previa
                                     </p>
                                     <p className="mt-4 text-sm leading-6">
-                                        Subí la imagen del bloque para ver cómo se
-                                        integra en la home.
+                                        Subí la imagen para ver cómo se va a ver
+                                        en la portada.
                                     </p>
                                 </div>
                             </div>
@@ -144,6 +151,7 @@ export default function HomeAboutIndex({ section, publicHomeUrl }) {
             if (form.image_file) {
                 const payload = new FormData();
                 payload.append("file", form.image_file);
+                payload.append("type", "image");
                 payload.append("title", form.title || "Home Nosotros");
 
                 const upload = await axios.post("/admin/api/media-assets", payload, {
@@ -190,7 +198,7 @@ export default function HomeAboutIndex({ section, publicHomeUrl }) {
                 sort_order: response.data.sort_order ?? current.sort_order,
             }));
 
-            emitAdminToast("El bloque Home Nosotros se actualizó correctamente.");
+            emitAdminToast("La sección sobre la empresa se actualizó correctamente.");
         } catch (error) {
             if (error?.response?.status === 422) {
                 setErrors(error.response.data.errors ?? {});
@@ -198,7 +206,7 @@ export default function HomeAboutIndex({ section, publicHomeUrl }) {
 
             emitAdminToast(
                 error?.response?.data?.message ||
-                    "No se pudo guardar el bloque Home Nosotros.",
+                    "No se pudo guardar la sección sobre la empresa.",
                 "error",
             );
         } finally {
@@ -208,7 +216,7 @@ export default function HomeAboutIndex({ section, publicHomeUrl }) {
 
     return (
         <AdminLayout>
-            <Head title="Home Nosotros" />
+            <Head title="Sobre la empresa en portada" />
 
             <div className="space-y-6">
                 <section className="overflow-hidden rounded-[32px] border border-slate-200 bg-white shadow-sm">
@@ -217,15 +225,15 @@ export default function HomeAboutIndex({ section, publicHomeUrl }) {
                             <div className="max-w-3xl">
                                 <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-[#25A7CA]/20 bg-[#25A7CA]/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-[#117a98]">
                                     <Icon icon="solar:users-group-rounded-outline" width={14} />
-                                    Home / Nosotros
+                                    Portada / Sobre la empresa
                                 </div>
                                 <h1 className="text-3xl font-semibold tracking-tight text-slate-900 md:text-4xl">
-                                    Bloque Home Nosotros
+                                    Bloque sobre la empresa
                                 </h1>
                                 <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-600">
-                                    Editá el bloque azul de presentación que aparece
-                                    en la home pública, manteniendo el mismo estilo
-                                    visual del sitio.
+                                    Acá podés cambiar la imagen y el texto del
+                                    bloque sobre la empresa que aparece en la
+                                    portada del sitio.
                                 </p>
                             </div>
 
@@ -235,7 +243,7 @@ export default function HomeAboutIndex({ section, publicHomeUrl }) {
                                 className="inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700 transition hover:border-[#25A7CA] hover:text-[#117a98]"
                             >
                                 <Icon icon="solar:square-arrow-right-up-outline" width={18} />
-                                Ver home pública
+                                Ver sitio público
                             </button>
                         </div>
                     </div>
@@ -253,8 +261,8 @@ export default function HomeAboutIndex({ section, publicHomeUrl }) {
                                 Editar contenido
                             </h2>
                             <p className="mt-2 text-sm text-slate-500">
-                                Todo lo que guardes acá impacta directamente en la
-                                sección `Home Nosotros`.
+                                Todo lo que guardes acá se verá en el bloque
+                                sobre la empresa de la portada.
                             </p>
                         </div>
 
@@ -296,6 +304,39 @@ export default function HomeAboutIndex({ section, publicHomeUrl }) {
                                 <label className="mb-2 block text-sm font-semibold text-slate-800">
                                     Imagen
                                 </label>
+                                <div className="mb-4 overflow-hidden rounded-[24px] border border-[#25A7CA]/20 bg-[linear-gradient(135deg,rgba(37,167,202,0.18),rgba(255,255,255,0.98))] shadow-[0_18px_45px_rgba(37,167,202,0.12)]">
+                                    <div className="flex flex-col gap-4 p-4 md:flex-row md:items-center md:justify-between">
+                                        <div className="flex items-start gap-3">
+                                            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-white text-[#117a98] shadow-sm">
+                                                <Icon icon="solar:gallery-outline" width={22} />
+                                            </div>
+                                            <div>
+                                                <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#117a98]">
+                                                    Recomendación importante
+                                                </p>
+                                                <h3 className="mt-1 text-base font-semibold text-slate-900">
+                                                    {ABOUT_IMAGE_GUIDE.title}
+                                                </h3>
+                                                <p className="mt-2 text-sm font-medium text-slate-700">
+                                                    {ABOUT_IMAGE_GUIDE.detail}
+                                                </p>
+                                                <p className="mt-1 text-sm font-semibold text-slate-900">
+                                                    {ABOUT_IMAGE_GUIDE.limit}
+                                                </p>
+                                                <p className="mt-2 text-sm text-slate-600">
+                                                    {ABOUT_IMAGE_GUIDE.note}
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        <div className="rounded-2xl border border-white/70 bg-white/85 px-4 py-3 text-sm font-semibold text-slate-700 shadow-sm">
+                                            Tamaño recomendado
+                                            <div className="mt-1 text-lg font-bold text-[#117a98]">
+                                                673 x 601 px
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                                 <input
                                     type="file"
                                     accept="image/*"

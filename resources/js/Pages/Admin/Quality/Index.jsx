@@ -7,6 +7,34 @@ import { Icon } from "@iconify/react";
 import axios from "axios";
 import { useEffect, useState } from "react";
 
+const QUALITY_COVER_GUIDE = {
+    title: "Imagen de la portada",
+    detail: "Usá una imagen de 1366 x 350 px.",
+    limit: "Peso máximo: 10 MB.",
+    note: "Si respetás esa medida, la portada se va a ver mejor en la página.",
+};
+
+const QUALITY_MAIN_IMAGE_GUIDE = {
+    title: "Imagen principal",
+    detail: "Usá una imagen de 600 x 600 px.",
+    limit: "Peso máximo: 10 MB.",
+    note: "Si respetás esa medida, la imagen principal se va a ver mejor en la sección.",
+};
+
+const QUALITY_MAIN_VIDEO_GUIDE = {
+    title: "Video local",
+    detail: "Usá un video de 600 x 600 px.",
+    limit: "Peso máximo: 100 MB.",
+    note: "Si respetás esa medida, el video se va a ver mejor en la sección.",
+};
+
+const QUALITY_LOGO_GUIDE = {
+    title: "Logo de calidad",
+    detail: "Usá un logo de 206 x 68 px.",
+    limit: "Peso máximo: 10 MB.",
+    note: "Si mantenés esa proporción, los logos se van a ver más ordenados.",
+};
+
 function emptyHeroForm(hero) {
     return {
         id: hero?.id ?? null,
@@ -78,6 +106,11 @@ function createLogoItem(position = 0) {
 async function uploadAsset(file, title) {
     const payload = new FormData();
     payload.append("file", file);
+    if (file?.type?.startsWith("image/")) {
+        payload.append("type", "image");
+    } else if (file?.type?.startsWith("video/")) {
+        payload.append("type", "video");
+    }
     payload.append("title", title || file.name);
 
     const response = await axios.post("/admin/api/media-assets", payload, {
@@ -437,6 +470,39 @@ export default function QualityIndex({
                             </Field>
 
                             <Field label="Imagen del banner">
+                                <div className="mb-4 overflow-hidden rounded-[24px] border border-[#25A7CA]/20 bg-[linear-gradient(135deg,rgba(37,167,202,0.18),rgba(255,255,255,0.98))] shadow-[0_18px_45px_rgba(37,167,202,0.12)]">
+                                    <div className="flex flex-col gap-4 p-4">
+                                        <div className="flex items-start gap-3">
+                                            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-white text-[#117a98] shadow-sm">
+                                                <Icon icon="solar:gallery-outline" width={22} />
+                                            </div>
+                                            <div>
+                                                <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#117a98]">
+                                                    Recomendación importante
+                                                </p>
+                                                <h3 className="mt-1 text-base font-semibold text-slate-900">
+                                                    {QUALITY_COVER_GUIDE.title}
+                                                </h3>
+                                                <p className="mt-2 text-sm font-medium text-slate-700">
+                                                    {QUALITY_COVER_GUIDE.detail}
+                                                </p>
+                                                <p className="mt-1 text-sm font-semibold text-slate-900">
+                                                    {QUALITY_COVER_GUIDE.limit}
+                                                </p>
+                                                <p className="mt-2 text-sm text-slate-600">
+                                                    {QUALITY_COVER_GUIDE.note}
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        <div className="rounded-2xl border border-white/70 bg-white/85 px-4 py-3 text-sm font-semibold text-slate-700 shadow-sm">
+                                            Tamaño recomendado
+                                            <div className="mt-1 text-lg font-bold text-[#117a98]">
+                                                1366 x 350 px
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                                 <input
                                     type="file"
                                     accept="image/*"
@@ -539,6 +605,41 @@ export default function QualityIndex({
                             </Field>
 
                             <Field label="Imagen principal" hint="Se usa como imagen fija y también como portada visual de la sección.">
+                                {policyForm.media_type === "image" ? (
+                                    <div className="mb-4 overflow-hidden rounded-[24px] border border-[#25A7CA]/20 bg-[linear-gradient(135deg,rgba(37,167,202,0.18),rgba(255,255,255,0.98))] shadow-[0_18px_45px_rgba(37,167,202,0.12)]">
+                                        <div className="flex flex-col gap-4 p-4">
+                                            <div className="flex items-start gap-3">
+                                                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-white text-[#117a98] shadow-sm">
+                                                    <Icon icon="solar:gallery-outline" width={22} />
+                                                </div>
+                                                <div>
+                                                    <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#117a98]">
+                                                        Recomendación importante
+                                                    </p>
+                                                    <h3 className="mt-1 text-base font-semibold text-slate-900">
+                                                        {QUALITY_MAIN_IMAGE_GUIDE.title}
+                                                    </h3>
+                                                    <p className="mt-2 text-sm font-medium text-slate-700">
+                                                        {QUALITY_MAIN_IMAGE_GUIDE.detail}
+                                                    </p>
+                                                    <p className="mt-1 text-sm font-semibold text-slate-900">
+                                                        {QUALITY_MAIN_IMAGE_GUIDE.limit}
+                                                    </p>
+                                                    <p className="mt-2 text-sm text-slate-600">
+                                                        {QUALITY_MAIN_IMAGE_GUIDE.note}
+                                                    </p>
+                                                </div>
+                                            </div>
+
+                                            <div className="rounded-2xl border border-white/70 bg-white/85 px-4 py-3 text-sm font-semibold text-slate-700 shadow-sm">
+                                                Tamaño recomendado
+                                                <div className="mt-1 text-lg font-bold text-[#117a98]">
+                                                    600 x 600 px
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ) : null}
                                 <input
                                     type="file"
                                     accept="image/*"
@@ -562,6 +663,39 @@ export default function QualityIndex({
 
                             {policyForm.media_type === "video" ? (
                                 <Field label="Video local">
+                                    <div className="mb-4 overflow-hidden rounded-[24px] border border-[#25A7CA]/20 bg-[linear-gradient(135deg,rgba(37,167,202,0.18),rgba(255,255,255,0.98))] shadow-[0_18px_45px_rgba(37,167,202,0.12)]">
+                                        <div className="flex flex-col gap-4 p-4">
+                                            <div className="flex items-start gap-3">
+                                                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-white text-[#117a98] shadow-sm">
+                                                    <Icon icon="solar:playback-speed-outline" width={22} />
+                                                </div>
+                                                <div>
+                                                    <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#117a98]">
+                                                        Recomendación importante
+                                                    </p>
+                                                    <h3 className="mt-1 text-base font-semibold text-slate-900">
+                                                        {QUALITY_MAIN_VIDEO_GUIDE.title}
+                                                    </h3>
+                                                    <p className="mt-2 text-sm font-medium text-slate-700">
+                                                        {QUALITY_MAIN_VIDEO_GUIDE.detail}
+                                                    </p>
+                                                    <p className="mt-1 text-sm font-semibold text-slate-900">
+                                                        {QUALITY_MAIN_VIDEO_GUIDE.limit}
+                                                    </p>
+                                                    <p className="mt-2 text-sm text-slate-600">
+                                                        {QUALITY_MAIN_VIDEO_GUIDE.note}
+                                                    </p>
+                                                </div>
+                                            </div>
+
+                                            <div className="rounded-2xl border border-white/70 bg-white/85 px-4 py-3 text-sm font-semibold text-slate-700 shadow-sm">
+                                                Tamaño recomendado
+                                                <div className="mt-1 text-lg font-bold text-[#117a98]">
+                                                    600 x 600 px
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <input
                                         type="file"
                                         accept="video/*"
@@ -735,6 +869,39 @@ export default function QualityIndex({
                                             </Field>
 
                                             <Field label="Imagen del logo">
+                                                <div className="mb-4 overflow-hidden rounded-[24px] border border-[#25A7CA]/20 bg-[linear-gradient(135deg,rgba(37,167,202,0.18),rgba(255,255,255,0.98))] shadow-[0_18px_45px_rgba(37,167,202,0.12)]">
+                                                    <div className="flex flex-col gap-4 p-4">
+                                                        <div className="flex items-start gap-3">
+                                                            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-white text-[#117a98] shadow-sm">
+                                                                <Icon icon="solar:gallery-outline" width={22} />
+                                                            </div>
+                                                            <div>
+                                                                <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#117a98]">
+                                                                    Recomendación importante
+                                                                </p>
+                                                                <h3 className="mt-1 text-base font-semibold text-slate-900">
+                                                                    {QUALITY_LOGO_GUIDE.title}
+                                                                </h3>
+                                                                <p className="mt-2 text-sm font-medium text-slate-700">
+                                                                    {QUALITY_LOGO_GUIDE.detail}
+                                                                </p>
+                                                                <p className="mt-1 text-sm font-semibold text-slate-900">
+                                                                    {QUALITY_LOGO_GUIDE.limit}
+                                                                </p>
+                                                                <p className="mt-2 text-sm text-slate-600">
+                                                                    {QUALITY_LOGO_GUIDE.note}
+                                                                </p>
+                                                            </div>
+                                                        </div>
+
+                                                        <div className="rounded-2xl border border-white/70 bg-white/85 px-4 py-3 text-sm font-semibold text-slate-700 shadow-sm">
+                                                            Tamaño recomendado
+                                                            <div className="mt-1 text-lg font-bold text-[#117a98]">
+                                                                206 x 68 px
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                                 <input
                                                     type="file"
                                                     accept="image/*"

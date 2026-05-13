@@ -290,6 +290,13 @@
                             <div class="product-tile__media">
                                 <span class="product-tile__plus" aria-hidden="true"></span>
                                 <img src="{{ media_asset_url($product->mainMedia) }}" alt="{{ $product->name }}">
+                                @if($product->brandLogoMedia)
+                                    <span
+                                        class="product-tile__brand-logo"
+                                        aria-hidden="true"
+                                        style="background-image: url('{{ media_asset_url($product->brandLogoMedia) }}');"
+                                    ></span>
+                                @endif
                             </div>
                             <div class="product-tile__body">
                                 @php

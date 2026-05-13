@@ -45,10 +45,27 @@ function emptyPartnerForm(partner = null) {
     };
 }
 
+const REPRESENTADAS_BANNER_GUIDE = {
+    title: "Imagen para la portada de representadas",
+    detail: "Usá una imagen horizontal para que se vea bien en la parte superior de la página.",
+    limit: "Peso máximo: 10 MB.",
+    note: "Si respetás esta medida, la portada se va a ver más limpia y ordenada.",
+    size: "1366 x 350 px",
+};
+
+const REPRESENTADAS_LOGO_GUIDE = {
+    title: "Imagen o logo de cada representada",
+    detail: "Esta imagen es la que aparece en el listado de representadas.",
+    limit: "Peso máximo: 10 MB.",
+    note: "Conviene mantener la proporción 269/76 para que todas se vean parejas.",
+    size: "287.074 x 81.106 px",
+};
+
 async function uploadAsset(file, title) {
     const payload = new FormData();
     payload.append("file", file);
     payload.append("title", title || file.name);
+    payload.append("type", "image");
 
     const response = await axios.post("/admin/api/media-assets", payload, {
         headers: { "Content-Type": "multipart/form-data" },
@@ -101,6 +118,33 @@ function Field({ label, hint = null, children }) {
             </div>
             {children}
         </label>
+    );
+}
+
+function RecommendationCard({ title, detail, limit, note, size }) {
+    return (
+        <div className="rounded-[24px] border border-[#25A7CA]/20 bg-[linear-gradient(135deg,rgba(37,167,202,0.18),rgba(255,255,255,0.98))] p-5 shadow-sm">
+            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                <div className="max-w-2xl space-y-2">
+                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#117a98]">
+                        Recomendación importante
+                    </p>
+                    <h3 className="text-lg font-semibold text-slate-900">{title}</h3>
+                    <p className="text-sm leading-6 text-slate-600">{detail}</p>
+                    <p className="text-sm font-semibold text-slate-900">{limit}</p>
+                    <p className="text-xs leading-5 text-slate-500">{note}</p>
+                </div>
+
+                <div className="rounded-[22px] border border-white/70 bg-white/80 px-5 py-4 text-center shadow-sm backdrop-blur">
+                    <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">
+                        Tamaño recomendado
+                    </p>
+                    <p className="mt-2 text-2xl font-semibold tracking-tight text-slate-900">
+                        {size}
+                    </p>
+                </div>
+            </div>
+        </div>
     );
 }
 
@@ -181,7 +225,7 @@ function PartnerModal({ open, partner, onClose, onSaved }) {
             if (form.logo_file) {
                 const uploaded = await uploadAsset(
                     form.logo_file,
-                    form.name || "Logo representada",
+                    form.name || "Imagen de representada",
                 );
                 logoMediaId = uploaded.id;
             }
@@ -246,7 +290,7 @@ function PartnerModal({ open, partner, onClose, onSaved }) {
                     />
                 </Field>
 
-                <Field label="Slug" hint="Se usa en URLs. Se genera automáticamente.">
+                <Field label="Texto para el enlace" hint="Se completa solo, pero lo podés cambiar si querés.">
                     <input
                         type="text"
                         value={form.slug}
@@ -266,10 +310,9 @@ function PartnerModal({ open, partner, onClose, onSaved }) {
                     />
                 </Field>
 
-                <Field
-                    label="Logo"
-                    hint="PNG o SVG con fondo transparente. Recomendado: 400 × 200 px."
-                >
+                <RecommendationCard {...REPRESENTADAS_LOGO_GUIDE} />
+
+                <Field label="Imagen o logo">
                     <input
                         type="file"
                         accept="image/*"
@@ -306,7 +349,7 @@ function PartnerModal({ open, partner, onClose, onSaved }) {
                         onChange={(v) => set("is_active", v)}
                     />
                     <Toggle
-                        label="Mostrar en home"
+                        label="Mostrar en portada"
                         checked={form.show_on_home}
                         onChange={(v) => set("show_on_home", v)}
                     />
@@ -502,15 +545,15 @@ export default function RepresentadasIndex({
                                         icon="solar:users-group-two-rounded-outline"
                                         width={14}
                                     />
-                                    Representadas / Marcas y aliados
+                                    Representadas / Marcas e imágenes
                                 </div>
                                 <h1 className="text-3xl font-semibold tracking-tight text-slate-900 md:text-4xl">
-                                    Gestión de representadas
+                                    Representadas
                                 </h1>
                                 <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-600">
-                                    Administrá el banner de la página pública y la
-                                    lista de marcas representadas con sus logos y
-                                    visibilidad.
+                                    Administrá la portada de la página y la lista
+                                    de representadas con sus imágenes y dónde se
+                                    muestran.
                                 </p>
                             </div>
 
@@ -542,7 +585,7 @@ export default function RepresentadasIndex({
                         icon="solar:check-circle-outline"
                     />
                     <StatCard
-                        label="Visibles en home"
+                        label="Visibles en portada"
                         value={stats?.on_home ?? partners.filter((p) => p.show_on_home && p.is_active).length}
                         icon="solar:home-smile-outline"
                     />
@@ -577,8 +620,7 @@ export default function RepresentadasIndex({
                                 Banner principal
                             </h2>
                             <p className="mt-2 text-sm text-slate-500">
-                                Título e imagen del hero superior en la página pública
-                                de representadas.
+                                Esta imagen se ve arriba de la página pública de representadas.
                             </p>
                         </div>
 
@@ -598,10 +640,9 @@ export default function RepresentadasIndex({
                                 />
                             </Field>
 
-                            <Field
-                                label="Imagen del banner"
-                                hint="Recomendado: 1920 × 600 px, JPG o WebP."
-                            >
+                            <RecommendationCard {...REPRESENTADAS_BANNER_GUIDE} />
+
+                            <Field label="Imagen del banner">
                                 <input
                                     type="file"
                                     accept="image/*"
@@ -657,7 +698,7 @@ export default function RepresentadasIndex({
                                     Listado de representadas
                                 </h2>
                                 <p className="mt-2 text-sm text-slate-500">
-                                    Cada representada se puede mostrar en la home,
+                                    Cada representada se puede mostrar en la portada,
                                     en la página de representadas, o en ambas.
                                 </p>
                             </div>
@@ -800,7 +841,7 @@ export default function RepresentadasIndex({
                                                                     icon="solar:home-smile-outline"
                                                                     width={11}
                                                                 />
-                                                                Home
+                                                                Portada
                                                             </span>
                                                         ) : null}
                                                         {partner.show_on_page ? (

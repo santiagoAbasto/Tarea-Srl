@@ -121,6 +121,7 @@ class ProductCatalogController extends Controller
         $pageData = $this->pageData();
         $gallery = $this->productGallery($product);
         $selectedMedia = $gallery->firstWhere('id', (int) $request->integer('media')) ?: $gallery->first();
+        $specTable = $this->firstCompleteSpecTable($product);
         $relatedProducts = $product->relatedProducts
             ->where('is_active', true)
             ->take(3)
@@ -146,7 +147,7 @@ class ProductCatalogController extends Controller
             'product' => $product,
             'gallery' => $gallery,
             'selectedMedia' => $selectedMedia,
-            'specTable' => $product->specTables->first(),
+            'specTable' => $specTable,
             'relatedProducts' => $relatedProducts,
             ...$pageData,
         ]);
@@ -173,7 +174,7 @@ class ProductCatalogController extends Controller
             ->firstOrFail();
 
         $gallery = $this->productGallery($product);
-        $specTable = $product->specTables->first();
+        $specTable = $this->firstCompleteSpecTable($product);
 
         $pdf = Pdf::loadView('web.products.technical-sheet', [
             'product' => $product,
@@ -212,7 +213,7 @@ class ProductCatalogController extends Controller
     protected function productsQuery()
     {
         return Product::query()
-            ->with(['family', 'subfamily', 'mainMedia'])
+            ->with(['family', 'subfamily', 'mainMedia', 'brandLogoMedia'])
             ->where('is_active', true)
             ->whereHas('family', fn ($query) => $query->where('show_on_products_page', true)->where('is_active', true))
             ->orderBy('product_family_id')
@@ -265,6 +266,41 @@ class ProductCatalogController extends Controller
         }
 
         return $items->unique('id')->values();
+    }
+
+    protected function firstCompleteSpecTable(Product $product)
+    {
+        return $product->specTables->first(fn ($table) => $this->specTableIsComplete($table));
+    }
+
+    protected function specTableIsComplete($table): bool
+    {
+        $columns = $table->columns->sortBy('sort_order')->values();
+        $rows = $table->rows->sortBy('sort_order')->values();
+
+        if ($columns->isEmpty() || $rows->isEmpty()) {
+            return false;
+        }
+
+        foreach ($columns as $column) {
+            if (blank($column->label)) {
+                return false;
+            }
+        }
+
+        foreach ($rows as $row) {
+            $valuesByColumn = $row->values->keyBy('product_spec_column_id');
+
+            foreach ($columns as $column) {
+                $value = $valuesByColumn->get($column->id)?->value;
+
+                if (blank(is_string($value) ? trim($value) : $value)) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
 
     protected function mediaDataUri(MediaAsset $media): ?string

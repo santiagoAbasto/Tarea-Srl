@@ -19,7 +19,7 @@ export default function Header({ onToggleSidebar }) {
                 </button>
 
                 <div>
-                    <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-400">Administración</p>
+                    <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-400">Panel principal</p>
                     <h2 className="text-base font-semibold text-slate-900 md:text-lg">{app?.name ?? "Tarea SRL"}</h2>
                 </div>
             </div>
@@ -28,7 +28,7 @@ export default function Header({ onToggleSidebar }) {
                 <button
                     onClick={() => router.visit("/admin/dashboard")}
                     className="relative flex rounded-2xl border border-slate-200 p-3 text-slate-500 transition hover:border-[#25A7CA] hover:text-[#25A7CA]"
-                    title="Dashboard"
+                    title="Ir al resumen"
                 >
                     <Icon icon="solar:widget-2-outline" width={18} />
                 </button>

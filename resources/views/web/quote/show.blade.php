@@ -214,6 +214,13 @@
                                     <span class="quote-page__file-input">
                                         <input type="file" name="attachments[]" data-file-input>
                                         <span class="quote-page__file-placeholder" data-file-placeholder>Selecciona archivo*</span>
+                                        <span class="quote-page__file-icon" aria-hidden="true">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                                <g opacity="0.5">
+                                                    <path d="M12 3V15M12 3L17 8M12 3L7 8M21 15V19C21 19.5304 20.7893 20.0391 20.4142 20.4142C20.0391 20.7893 19.5304 21 19 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V15" stroke="#1A181C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                                </g>
+                                            </svg>
+                                        </span>
                                     </span>
                                 </span>
                             </span>
@@ -225,11 +232,6 @@
                             <span>*Datos obligatorios</span>
                             <button type="submit" class="quote-page__submit">
                                 <span>{{ $fields?->get('button_text')?->field_value ?? 'Enviar solicitud' }}</span>
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                                    <g opacity="0.5">
-                                        <path d="M12 3V15M12 3L17 8M12 3L7 8M21 15V19C21 19.5304 20.7893 20.0391 20.4142 20.4142C20.0391 20.7893 19.5304 21 19 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V15" stroke="#1A181C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                    </g>
-                                </svg>
                             </button>
                         </div>
                     </div>
@@ -291,6 +293,13 @@
                         <span class="quote-page__file-input">
                             <input type="file" name="attachments[]" data-file-input>
                             <span class="quote-page__file-placeholder" data-file-placeholder>Selecciona archivo*</span>
+                            <span class="quote-page__file-icon" aria-hidden="true">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                    <g opacity="0.5">
+                                        <path d="M12 3V15M12 3L17 8M12 3L7 8M21 15V19C21 19.5304 20.7893 20.0391 20.4142 20.4142C20.0391 20.7893 19.5304 21 19 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V15" stroke="#1A181C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </g>
+                                </svg>
+                            </span>
                         </span>
                     `;
 

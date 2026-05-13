@@ -66,10 +66,27 @@ function emptyClientForm(client = null) {
     };
 }
 
+const CLIENTS_BANNER_GUIDE = {
+    title: "Imagen para la portada de clientes",
+    detail: "Usá una imagen horizontal para que se vea bien en la parte superior de la página.",
+    limit: "Peso máximo: 10 MB.",
+    note: "Si respetás esta medida, la imagen se verá completa y prolija.",
+    size: "1366 x 350 px",
+};
+
+const CLIENT_IMAGE_GUIDE = {
+    title: "Imagen para cada cliente",
+    detail: "Esta imagen es la que aparece en el listado de clientes.",
+    limit: "Peso máximo: 10 MB.",
+    note: "Conviene usar esta medida para que todas se vean parejas.",
+    size: "184 x 120 px",
+};
+
 async function uploadAsset(file, title) {
     const payload = new FormData();
     payload.append("file", file);
     payload.append("title", title || file.name);
+    payload.append("type", "image");
 
     const response = await axios.post("/admin/api/media-assets", payload, {
         headers: {
@@ -124,6 +141,33 @@ function Field({ label, hint = null, children }) {
             </div>
             {children}
         </label>
+    );
+}
+
+function RecommendationCard({ title, detail, limit, note, size }) {
+    return (
+        <div className="rounded-[24px] border border-[#25A7CA]/20 bg-[linear-gradient(135deg,rgba(37,167,202,0.18),rgba(255,255,255,0.98))] p-5 shadow-sm">
+            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                <div className="max-w-2xl space-y-2">
+                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#117a98]">
+                        Recomendación importante
+                    </p>
+                    <h3 className="text-lg font-semibold text-slate-900">{title}</h3>
+                    <p className="text-sm leading-6 text-slate-600">{detail}</p>
+                    <p className="text-sm font-semibold text-slate-900">{limit}</p>
+                    <p className="text-xs leading-5 text-slate-500">{note}</p>
+                </div>
+
+                <div className="rounded-[22px] border border-white/70 bg-white/80 px-5 py-4 text-center shadow-sm backdrop-blur">
+                    <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">
+                        Tamaño recomendado
+                    </p>
+                    <p className="mt-2 text-2xl font-semibold tracking-tight text-slate-900">
+                        {size}
+                    </p>
+                </div>
+            </div>
+        </div>
     );
 }
 
@@ -255,7 +299,7 @@ function CategoryModal({ open, category, onClose, onSaved }) {
                         />
                     </Field>
 
-                    <Field label="Slug">
+                    <Field label="Texto para el enlace">
                         <input
                             type="text"
                             value={form.slug}
@@ -333,7 +377,7 @@ function ClientModal({ open, client, categories, onClose, onSaved }) {
             if (form.logo_file) {
                 const uploaded = await uploadAsset(
                     form.logo_file,
-                    form.name || "Cliente logo",
+                    form.name || "Imagen de cliente",
                 );
                 logoMediaId = uploaded.id;
             }
@@ -402,7 +446,7 @@ function ClientModal({ open, client, categories, onClose, onSaved }) {
                         />
                     </Field>
 
-                    <Field label="Slug">
+                    <Field label="Texto para el enlace">
                         <input
                             type="text"
                             value={form.slug}
@@ -474,16 +518,18 @@ function ClientModal({ open, client, categories, onClose, onSaved }) {
                     </Field>
                 </div>
 
-                <Field label="Logo">
+                <RecommendationCard {...CLIENT_IMAGE_GUIDE} />
+
+                <Field label="Imagen del cliente">
                     <input
                         type="file"
                         accept="image/*"
                         onChange={(event) =>
-                            setForm((current) => ({
-                                ...current,
-                                logo_file: event.target.files?.[0] ?? null,
-                            }))
-                        }
+                                setForm((current) => ({
+                                    ...current,
+                                    logo_file: event.target.files?.[0] ?? null,
+                                }))
+                            }
                         className="block w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 file:mr-4 file:rounded-xl file:border-0 file:bg-[#25A7CA]/10 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-[#117a98] hover:file:bg-[#25A7CA]/15"
                     />
                     {form.logo_url ? (
@@ -506,7 +552,7 @@ function ClientModal({ open, client, categories, onClose, onSaved }) {
                         }
                     />
                     <Toggle
-                        label="Mostrar en home"
+                        label="Mostrar en portada"
                         checked={form.show_on_home}
                         onChange={(value) =>
                             setForm((current) => ({
@@ -736,15 +782,15 @@ export default function ClientsIndex({
                             <div className="max-w-3xl">
                                 <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-[#25A7CA]/20 bg-[#25A7CA]/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-[#117a98]">
                                     <Icon icon="solar:buildings-2-outline" width={14} />
-                                    Clientes / Rubros y logos
+                                    Clientes / Categorías e imágenes
                                 </div>
                                 <h1 className="text-3xl font-semibold tracking-tight text-slate-900 md:text-4xl">
-                                    Gestión de clientes
+                                    Clientes
                                 </h1>
                                 <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-600">
-                                    Desde acá administrás el banner, el título de la
+                                    Desde acá administrás la portada, el título de la
                                     página, las categorías y los clientes que se ven
-                                    en la web pública y en home.
+                                    en el sitio público y en la portada.
                                 </p>
                             </div>
 
@@ -772,7 +818,7 @@ export default function ClientsIndex({
                         icon="solar:buildings-2-outline"
                     />
                     <StatCard
-                        label="En home"
+                        label="En portada"
                         value={stats?.home_clients ?? clients.filter((item) => item.show_on_home && item.is_active).length}
                         icon="solar:home-smile-outline"
                     />
@@ -807,7 +853,7 @@ export default function ClientsIndex({
                                     Banner principal
                                 </h2>
                                 <p className="mt-2 text-sm text-slate-500">
-                                    Controla el hero superior de la página pública de clientes.
+                                    Esta imagen se ve arriba de la página pública de clientes.
                                 </p>
                             </div>
 
@@ -825,6 +871,8 @@ export default function ClientsIndex({
                                         className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 shadow-sm outline-none transition focus:border-[#25A7CA] focus:ring-4 focus:ring-[#25A7CA]/10"
                                     />
                                 </Field>
+
+                                <RecommendationCard {...CLIENTS_BANNER_GUIDE} />
 
                                 <Field label="Imagen del banner">
                                     <input
@@ -875,7 +923,7 @@ export default function ClientsIndex({
                         <section className="rounded-[30px] border border-slate-200 bg-white p-6 shadow-sm">
                             <div className="mb-6">
                                 <h2 className="text-2xl font-semibold text-slate-900">
-                                    Título de contenido
+                                    Título del listado
                                 </h2>
                                 <p className="mt-2 text-sm text-slate-500">
                                     Este bloque aparece antes del listado de rubros en la página pública.
@@ -953,7 +1001,7 @@ export default function ClientsIndex({
                                 <thead className="bg-slate-50">
                                     <tr className="text-left text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">
                                         <th className="px-4 py-4">Categoría</th>
-                                        <th className="px-4 py-4">Slug</th>
+                                        <th className="px-4 py-4">Texto para el enlace</th>
                                         <th className="px-4 py-4">Clientes</th>
                                         <th className="px-4 py-4">Estado</th>
                                         <th className="px-4 py-4 text-right">Acciones</th>
@@ -1020,7 +1068,7 @@ export default function ClientsIndex({
                                     Clientes
                                 </h2>
                                 <p className="mt-2 text-sm text-slate-500">
-                                    Administrá logos, categorías asociadas y visibilidad en home.
+                                    Administrá las imágenes, sus categorías y si se muestran en la portada.
                                 </p>
                             </div>
 

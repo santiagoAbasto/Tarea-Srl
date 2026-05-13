@@ -132,6 +132,10 @@
 ================================================================ */
 
 @media (max-width: 768px) {
+    .about-block {
+        gap: 15px;
+    }
+
     .about-block__media img {
         max-height: 260px;
         object-position: center top;

@@ -13,10 +13,28 @@ class NovedadesPageController extends Controller
 {
     public function index(): Response
     {
-        $allowedTabs = ['categorias', 'novedades'];
+        $allowedTabs = ['page', 'categorias', 'novedades'];
         $initialTab  = in_array(request()->string('tab')->toString(), $allowedTabs, true)
             ? request()->string('tab')->toString()
-            : 'novedades';
+            : 'page';
+
+        $hero = SiteSection::query()
+            ->where('page_key', 'novedades')
+            ->whereIn('section_key', ['hero', 'novedades_banner'])
+            ->orderByRaw("case when section_key = 'hero' then 0 else 1 end")
+            ->first();
+
+        if (! $hero) {
+            $hero = SiteSection::query()->create([
+                'page_key' => 'novedades',
+                'section_key' => 'novedades_banner',
+                'title' => 'NOVEDADES',
+                'sort_order' => 'A',
+                'is_active' => true,
+            ]);
+        }
+
+        $hero->load('media');
 
         $categories = PostCategory::query()
             ->withCount('posts')
@@ -58,6 +76,15 @@ class NovedadesPageController extends Controller
             ->values();
 
         return Inertia::render('Admin/Novedades/Index', [
+            'hero' => [
+                'id' => $hero->id,
+                'section_key' => $hero->section_key,
+                'title' => $hero->title,
+                'media_id' => $hero->media_id,
+                'media_url' => media_asset_url($hero->media),
+                'sort_order' => $hero->sort_order,
+                'is_active' => $hero->is_active,
+            ],
             'categories'    => $categories,
             'posts'         => $posts,
             'stats' => [

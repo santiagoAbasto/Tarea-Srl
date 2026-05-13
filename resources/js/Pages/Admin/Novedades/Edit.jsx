@@ -6,6 +6,14 @@ import { Icon } from "@iconify/react";
 import axios from "axios";
 import { useRef, useState } from "react";
 
+const NOVEDAD_IMAGE_GUIDE = {
+    title: "Imagen para la novedad",
+    detail: "Esta imagen es la que aparece en el listado de novedades.",
+    limit: "Peso máximo: 10 MB.",
+    note: "Si respetás esta medida, todas las novedades se van a ver más ordenadas.",
+    size: "392 x 488 px",
+};
+
 function slugify(value) {
     return String(value || "")
         .normalize("NFD")
@@ -20,6 +28,7 @@ async function uploadAsset(file, title) {
     const payload = new FormData();
     payload.append("file", file);
     payload.append("title", title || file.name);
+    payload.append("type", "image");
     const response = await axios.post("/admin/api/media-assets", payload, {
         headers: { "Content-Type": "multipart/form-data" },
     });
@@ -59,6 +68,33 @@ function Toggle({ label, description, checked, onChange }) {
                 )}
             </div>
         </label>
+    );
+}
+
+function RecommendationCard({ title, detail, limit, note, size }) {
+    return (
+        <div className="rounded-[24px] border border-[#25A7CA]/20 bg-[linear-gradient(135deg,rgba(37,167,202,0.18),rgba(255,255,255,0.98))] p-5 shadow-sm">
+            <div className="flex flex-col gap-4">
+                <div className="space-y-2">
+                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#117a98]">
+                        Recomendación importante
+                    </p>
+                    <h3 className="text-lg font-semibold text-slate-900">{title}</h3>
+                    <p className="text-sm leading-6 text-slate-600">{detail}</p>
+                    <p className="text-sm font-semibold text-slate-900">{limit}</p>
+                    <p className="text-xs leading-5 text-slate-500">{note}</p>
+                </div>
+
+                <div className="rounded-[22px] border border-white/70 bg-white/80 px-5 py-4 text-center shadow-sm backdrop-blur">
+                    <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">
+                        Tamaño recomendado
+                    </p>
+                    <p className="mt-2 text-2xl font-semibold tracking-tight text-slate-900">
+                        {size}
+                    </p>
+                </div>
+            </div>
+        </div>
     );
 }
 
@@ -293,6 +329,10 @@ export default function NovedadesEdit({ post, categories = [] }) {
                         <h2 className="mb-4 text-sm font-semibold uppercase tracking-wider text-slate-400">
                             Imagen de portada
                         </h2>
+
+                        <div className="mb-4">
+                            <RecommendationCard {...NOVEDAD_IMAGE_GUIDE} />
+                        </div>
 
                         {form.cover_url ? (
                             <div className="relative overflow-hidden rounded-2xl border border-slate-200">

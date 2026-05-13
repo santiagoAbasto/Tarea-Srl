@@ -57,10 +57,19 @@ function emptyContentForm(content) {
     };
 }
 
+const QUOTE_BANNER_GUIDE = {
+    title: "Imagen para la portada de presupuesto",
+    detail: "Usá una imagen horizontal para que se vea bien en la parte superior de la página.",
+    limit: "Peso máximo: 10 MB.",
+    note: "Si respetás esta medida, la portada se va a ver más limpia y ordenada.",
+    size: "1366 x 350 px",
+};
+
 async function uploadAsset(file, title) {
     const payload = new FormData();
     payload.append("file", file);
     payload.append("title", title || file.name);
+    payload.append("type", "image");
 
     const response = await axios.post("/admin/api/media-assets", payload, {
         headers: {
@@ -120,6 +129,33 @@ function Field({ label, hint = null, children }) {
             </div>
             {children}
         </label>
+    );
+}
+
+function RecommendationCard({ title, detail, limit, note, size }) {
+    return (
+        <div className="rounded-[24px] border border-[#25A7CA]/20 bg-[linear-gradient(135deg,rgba(37,167,202,0.18),rgba(255,255,255,0.98))] p-5 shadow-sm">
+            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                <div className="max-w-2xl space-y-2">
+                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#117a98]">
+                        Recomendación importante
+                    </p>
+                    <h3 className="text-lg font-semibold text-slate-900">{title}</h3>
+                    <p className="text-sm leading-6 text-slate-600">{detail}</p>
+                    <p className="text-sm font-semibold text-slate-900">{limit}</p>
+                    <p className="text-xs leading-5 text-slate-500">{note}</p>
+                </div>
+
+                <div className="rounded-[22px] border border-white/70 bg-white/80 px-5 py-4 text-center shadow-sm backdrop-blur">
+                    <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">
+                        Tamaño recomendado
+                    </p>
+                    <p className="mt-2 text-2xl font-semibold tracking-tight text-slate-900">
+                        {size}
+                    </p>
+                </div>
+            </div>
+        </div>
     );
 }
 
@@ -417,6 +453,8 @@ export default function QuoteIndex({
                                         className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 shadow-sm outline-none transition focus:border-[#25A7CA] focus:ring-4 focus:ring-[#25A7CA]/10"
                                     />
                                 </Field>
+
+                                <RecommendationCard {...QUOTE_BANNER_GUIDE} />
 
                                 <Field label="Imagen del banner">
                                     <input

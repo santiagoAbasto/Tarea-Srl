@@ -22,6 +22,27 @@ function formatDate(dateStr) {
     return d.toLocaleDateString("es-AR", { day: "2-digit", month: "short", year: "numeric" });
 }
 
+function emptyHeroForm(hero) {
+    return {
+        id: hero?.id ?? null,
+        section_key: hero?.section_key ?? "novedades_banner",
+        title: hero?.title ?? "",
+        media_id: hero?.media_id ?? null,
+        media_url: hero?.media_url ?? "",
+        image_file: null,
+        sort_order: hero?.sort_order ?? "A",
+        is_active: hero?.is_active ?? true,
+    };
+}
+
+const NOVEDADES_BANNER_GUIDE = {
+    title: "Imagen para la portada de novedades",
+    detail: "Usá una imagen horizontal para que se vea bien en la parte superior de la página.",
+    limit: "Peso máximo: 10 MB.",
+    note: "Si respetás esta medida, la portada se va a ver más limpia y ordenada.",
+    size: "1366 x 350 px",
+};
+
 /* ── shared mini components ─────────────────────────── */
 
 function TabButton({ active, icon, label, onClick }) {
@@ -66,6 +87,33 @@ function Field({ label, hint = null, children }) {
             </div>
             {children}
         </label>
+    );
+}
+
+function RecommendationCard({ title, detail, limit, note, size }) {
+    return (
+        <div className="rounded-[24px] border border-[#25A7CA]/20 bg-[linear-gradient(135deg,rgba(37,167,202,0.18),rgba(255,255,255,0.98))] p-5 shadow-sm">
+            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                <div className="max-w-2xl space-y-2">
+                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#117a98]">
+                        Recomendación importante
+                    </p>
+                    <h3 className="text-lg font-semibold text-slate-900">{title}</h3>
+                    <p className="text-sm leading-6 text-slate-600">{detail}</p>
+                    <p className="text-sm font-semibold text-slate-900">{limit}</p>
+                    <p className="text-xs leading-5 text-slate-500">{note}</p>
+                </div>
+
+                <div className="rounded-[22px] border border-white/70 bg-white/80 px-5 py-4 text-center shadow-sm backdrop-blur">
+                    <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">
+                        Tamaño recomendado
+                    </p>
+                    <p className="mt-2 text-2xl font-semibold tracking-tight text-slate-900">
+                        {size}
+                    </p>
+                </div>
+            </div>
+        </div>
     );
 }
 
@@ -256,8 +304,10 @@ function DeleteModal({ open, item, label, apiPath, onClose, onDeleted }) {
 
 /* ── Main page ───────────────────────────────────────── */
 
-export default function NovedadesIndex({ categories: initialCategories, posts: initialPosts, stats, initialTab, publicNovedadesUrl }) {
+export default function NovedadesIndex({ hero, categories: initialCategories, posts: initialPosts, stats, initialTab, publicNovedadesUrl }) {
     const [tab, setTab] = useState(initialTab ?? "novedades");
+    const [heroForm, setHeroForm] = useState(emptyHeroForm(hero));
+    const [heroSaving, setHeroSaving] = useState(false);
     const [categories, setCategories] = useState(initialCategories ?? []);
     const [posts, setPosts] = useState(initialPosts ?? []);
     const [search, setSearch] = useState("");
@@ -266,7 +316,55 @@ export default function NovedadesIndex({ categories: initialCategories, posts: i
     const [deleteModal, setDeleteModal] = useState({ open: false, item: null, label: "", apiPath: "" });
     const [previewOpen, setPreviewOpen] = useState(false);
 
+    useEffect(() => {
+        setHeroForm(emptyHeroForm(hero));
+    }, [hero]);
+
     const reloadPage = () => router.reload();
+
+    const saveHero = async () => {
+        setHeroSaving(true);
+
+        try {
+            let mediaId = heroForm.media_id;
+
+            if (heroForm.image_file) {
+                const payload = new FormData();
+                payload.append("file", heroForm.image_file);
+                payload.append("title", heroForm.title || "Novedades banner");
+                payload.append("type", "image");
+
+                const response = await axios.post("/admin/api/media-assets", payload, {
+                    headers: { "Content-Type": "multipart/form-data" },
+                });
+
+                mediaId = response.data.id;
+            }
+
+            await axios.put(`/admin/api/site-sections/${heroForm.id}`, {
+                page_key: "novedades",
+                section_key: heroForm.section_key || "novedades_banner",
+                title: heroForm.title || null,
+                media_id: mediaId,
+                sort_order: heroForm.sort_order || "A",
+                is_active: heroForm.is_active,
+                sync_field_values: false,
+                sync_items: false,
+                field_values: [],
+                items: [],
+            });
+
+            emitAdminToast("La portada de novedades se actualizó correctamente.");
+            reloadPage();
+        } catch (error) {
+            emitAdminToast(
+                error?.response?.data?.message || "No se pudo guardar la portada de novedades.",
+                "error",
+            );
+        } finally {
+            setHeroSaving(false);
+        }
+    };
 
     const filteredPosts = posts.filter((p) => {
         const matchSearch = (p.title ?? "").toLowerCase().includes(search.toLowerCase());
@@ -312,13 +410,13 @@ export default function NovedadesIndex({ categories: initialCategories, posts: i
                             <div className="max-w-3xl">
                                 <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-[#25A7CA]/20 bg-[#25A7CA]/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-[#117a98]">
                                     <Icon icon="solar:document-text-outline" width={14} />
-                                    Novedades / Noticias del sitio
+                                    Novedades / Portada y noticias
                                 </div>
                                 <h1 className="text-3xl font-semibold tracking-tight text-slate-900 md:text-4xl">
-                                    Gestión de novedades
+                                    Novedades
                                 </h1>
                                 <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-600">
-                                    Administrá las categorías y las novedades publicadas en el sitio con soporte para texto enriquecido.
+                                    Administrá la portada, las categorías y las novedades publicadas en el sitio.
                                 </p>
                             </div>
                             <div className="flex flex-wrap gap-3">
@@ -353,9 +451,84 @@ export default function NovedadesIndex({ categories: initialCategories, posts: i
 
                 {/* Tabs */}
                 <section className="flex flex-wrap gap-3">
+                    <TabButton active={tab === "page"} icon="solar:gallery-outline" label="Portada" onClick={() => setTab("page")} />
                     <TabButton active={tab === "novedades"} icon="solar:document-text-outline" label={`Novedades (${posts.length})`} onClick={() => setTab("novedades")} />
                     <TabButton active={tab === "categorias"} icon="solar:tag-outline" label={`Categorías (${categories.length})`} onClick={() => setTab("categorias")} />
                 </section>
+
+                {tab === "page" ? (
+                    <section className="rounded-[30px] border border-slate-200 bg-white p-6 shadow-sm">
+                        <div className="mb-6">
+                            <h2 className="text-2xl font-semibold text-slate-900">Banner principal</h2>
+                            <p className="mt-2 text-sm text-slate-500">
+                                Esta imagen se ve arriba de la página pública de novedades.
+                            </p>
+                        </div>
+
+                        <div className="space-y-5 xl:max-w-2xl">
+                            <Field label="Título del banner">
+                                <input
+                                    type="text"
+                                    value={heroForm.title}
+                                    onChange={(e) =>
+                                        setHeroForm((prev) => ({
+                                            ...prev,
+                                            title: e.target.value,
+                                        }))
+                                    }
+                                    className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 shadow-sm outline-none transition focus:border-[#25A7CA] focus:ring-4 focus:ring-[#25A7CA]/10"
+                                    placeholder="NOVEDADES"
+                                />
+                            </Field>
+
+                            <RecommendationCard {...NOVEDADES_BANNER_GUIDE} />
+
+                            <Field label="Imagen del banner">
+                                <input
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={(e) =>
+                                        setHeroForm((prev) => ({
+                                            ...prev,
+                                            image_file: e.target.files?.[0] ?? null,
+                                        }))
+                                    }
+                                    className="block w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 file:mr-4 file:rounded-xl file:border-0 file:bg-[#25A7CA]/10 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-[#117a98] hover:file:bg-[#25A7CA]/15"
+                                />
+                                {heroForm.media_url ? (
+                                    <img
+                                        src={heroForm.media_url}
+                                        alt={heroForm.title || "Banner novedades"}
+                                        className="mt-3 h-56 w-full rounded-2xl border border-slate-200 object-cover"
+                                    />
+                                ) : null}
+                            </Field>
+
+                            <Toggle
+                                label="Bloque activo"
+                                checked={heroForm.is_active}
+                                onChange={(v) =>
+                                    setHeroForm((prev) => ({
+                                        ...prev,
+                                        is_active: v,
+                                    }))
+                                }
+                            />
+
+                            <div className="flex justify-end border-t border-slate-200 pt-5">
+                                <button
+                                    type="button"
+                                    onClick={saveHero}
+                                    disabled={heroSaving}
+                                    className="inline-flex items-center gap-2 rounded-2xl bg-[#25A7CA] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#1d96b8] disabled:opacity-60"
+                                >
+                                    <Icon icon="solar:diskette-outline" width={18} />
+                                    {heroSaving ? "Guardando..." : "Guardar banner"}
+                                </button>
+                            </div>
+                        </div>
+                    </section>
+                ) : null}
 
                 {/* ── Tab: Novedades ── */}
                 {tab === "novedades" ? (
@@ -363,7 +536,7 @@ export default function NovedadesIndex({ categories: initialCategories, posts: i
                         <div className="mb-6 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
                             <div>
                                 <h2 className="text-2xl font-semibold text-slate-900">Listado de novedades</h2>
-                                <p className="mt-2 text-sm text-slate-500">Hacé clic en editar para modificar el contenido enriquecido de cada novedad.</p>
+                                <p className="mt-2 text-sm text-slate-500">Hacé clic en editar para modificar cada novedad y su imagen.</p>
                             </div>
                             <div className="flex flex-wrap items-center gap-3">
                                 <select
@@ -459,7 +632,7 @@ export default function NovedadesIndex({ categories: initialCategories, posts: i
                                                         {post.show_on_home ? (
                                                             <span className="inline-flex items-center gap-1 rounded-full bg-[#25A7CA]/10 px-2.5 py-1 text-[11px] font-semibold text-[#117a98]">
                                                                 <Icon icon="solar:home-smile-outline" width={11} />
-                                                                Home
+                                                                Inicio
                                                             </span>
                                                         ) : null}
                                                     </div>

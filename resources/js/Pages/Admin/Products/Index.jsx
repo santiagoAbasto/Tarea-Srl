@@ -6,6 +6,34 @@ import { Icon } from "@iconify/react";
 import axios from "axios";
 import { useEffect, useMemo, useState } from "react";
 
+const PRODUCT_IMAGE_GUIDE = {
+    title: "Imagen del producto",
+    detail: "Usá una imagen de 391 x 391 px.",
+    limit: "Peso máximo: 10 MB.",
+    note: "Si respetás esa medida, la imagen del producto se va a ver mejor en el catálogo.",
+};
+
+const PRODUCT_BRAND_LOGO_GUIDE = {
+    title: "Logo dentro de la imagen",
+    detail: "Usá un logo de 77 x 44 px.",
+    limit: "Peso máximo: 10 MB.",
+    note: "Si mantenés esa proporción, el logo se va a ver más prolijo dentro de la imagen.",
+};
+
+const PRODUCTS_COVER_GUIDE = {
+    title: "Imagen de la portada",
+    detail: "Usá una imagen de 1366 x 350 px.",
+    limit: "Peso máximo: 10 MB.",
+    note: "Si respetás esa medida, la portada se va a ver mejor al abrir la página de productos.",
+};
+
+const PRODUCT_FAMILY_GUIDE = {
+    title: "Imagen de la familia",
+    detail: "Usá una imagen de 392 x 470 px.",
+    limit: "Peso máximo: 10 MB.",
+    note: "Si respetás esa medida, las familias se van a ver más ordenadas en el catálogo.",
+};
+
 function mediaUrlFromAsset(asset) {
     if (!asset?.path) {
         return "";
@@ -207,6 +235,9 @@ function emptyProductForm(product = null) {
         main_media_id: product?.main_media_id ?? null,
         main_media_url: product?.main_media_url ?? "",
         main_media_file: null,
+        brand_logo_media_id: product?.brand_logo_media_id ?? null,
+        brand_logo_media_url: product?.brand_logo_media_url ?? "",
+        brand_logo_media_file: null,
         technical_sheet_media_id: product?.technical_sheet_media_id ?? null,
         technical_sheet_url: product?.technical_sheet_url ?? "",
         technical_sheet_file: null,
@@ -223,6 +254,7 @@ function emptyProductForm(product = null) {
 function mapProductDetails(product) {
     const specTableRows = product?.spec_tables ?? product?.specTables ?? [];
     const mainMedia = product?.main_media ?? product?.mainMedia;
+    const brandLogoMedia = product?.brand_logo_media ?? product?.brandLogoMedia;
     const technicalSheet = product?.technical_sheet ?? product?.technicalSheet;
     const relatedProducts = product?.related_products ?? product?.relatedProducts ?? [];
 
@@ -270,6 +302,7 @@ function mapProductDetails(product) {
     return emptyProductForm({
         ...product,
         main_media_url: mediaUrlFromAsset(mainMedia),
+        brand_logo_media_url: mediaUrlFromAsset(brandLogoMedia),
         technical_sheet_url: mediaUrlFromAsset(technicalSheet),
         gallery: (product?.media ?? []).map((item) => ({
             media_id: item.media_id,
@@ -464,6 +497,39 @@ function CoverEditor({ form, onChange, onSave, saving }) {
                     </Field>
 
                     <Field label="Imagen del banner">
+                        <div className="mb-4 overflow-hidden rounded-[24px] border border-[#25A7CA]/20 bg-[linear-gradient(135deg,rgba(37,167,202,0.18),rgba(255,255,255,0.98))] shadow-[0_18px_45px_rgba(37,167,202,0.12)]">
+                            <div className="flex flex-col gap-4 p-4">
+                                <div className="flex items-start gap-3">
+                                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-white text-[#117a98] shadow-sm">
+                                        <Icon icon="solar:gallery-outline" width={22} />
+                                    </div>
+                                    <div>
+                                        <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#117a98]">
+                                            Recomendación importante
+                                        </p>
+                                        <h3 className="mt-1 text-base font-semibold text-slate-900">
+                                            {PRODUCTS_COVER_GUIDE.title}
+                                        </h3>
+                                        <p className="mt-2 text-sm font-medium text-slate-700">
+                                            {PRODUCTS_COVER_GUIDE.detail}
+                                        </p>
+                                        <p className="mt-1 text-sm font-semibold text-slate-900">
+                                            {PRODUCTS_COVER_GUIDE.limit}
+                                        </p>
+                                        <p className="mt-2 text-sm text-slate-600">
+                                            {PRODUCTS_COVER_GUIDE.note}
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div className="rounded-2xl border border-white/70 bg-white/85 px-4 py-3 text-sm font-semibold text-slate-700 shadow-sm">
+                                    Tamaño recomendado
+                                    <div className="mt-1 text-lg font-bold text-[#117a98]">
+                                        1366 x 350 px
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         <input
                             type="file"
                             accept="image/*"
@@ -677,6 +743,39 @@ function FamilyModal({ open, families, family, onClose, onSaved }) {
 
                 <div className="grid gap-5 md:grid-cols-2">
                     <Field label="Imagen de card">
+                        <div className="mb-4 overflow-hidden rounded-[24px] border border-[#25A7CA]/20 bg-[linear-gradient(135deg,rgba(37,167,202,0.18),rgba(255,255,255,0.98))] shadow-[0_18px_45px_rgba(37,167,202,0.12)]">
+                            <div className="flex flex-col gap-4 p-4">
+                                <div className="flex items-start gap-3">
+                                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-white text-[#117a98] shadow-sm">
+                                        <Icon icon="solar:gallery-outline" width={22} />
+                                    </div>
+                                    <div>
+                                        <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#117a98]">
+                                            Recomendación importante
+                                        </p>
+                                        <h3 className="mt-1 text-base font-semibold text-slate-900">
+                                            {PRODUCT_FAMILY_GUIDE.title}
+                                        </h3>
+                                        <p className="mt-2 text-sm font-medium text-slate-700">
+                                            {PRODUCT_FAMILY_GUIDE.detail}
+                                        </p>
+                                        <p className="mt-1 text-sm font-semibold text-slate-900">
+                                            {PRODUCT_FAMILY_GUIDE.limit}
+                                        </p>
+                                        <p className="mt-2 text-sm text-slate-600">
+                                            {PRODUCT_FAMILY_GUIDE.note}
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div className="rounded-2xl border border-white/70 bg-white/85 px-4 py-3 text-sm font-semibold text-slate-700 shadow-sm">
+                                    Tamaño recomendado
+                                    <div className="mt-1 text-lg font-bold text-[#117a98]">
+                                        392 x 470 px
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         <input
                             type="file"
                             accept="image/*"
@@ -1601,6 +1700,7 @@ function ProductModal({
 
         try {
             let mainMediaId = form.main_media_id;
+            let brandLogoMediaId = form.brand_logo_media_id;
             let technicalSheetMediaId = form.technical_sheet_media_id;
 
             if (form.main_media_file) {
@@ -1617,6 +1717,14 @@ function ProductModal({
                     `${form.name || "producto"} ficha`,
                 );
                 technicalSheetMediaId = uploaded.id;
+            }
+
+            if (form.brand_logo_media_file) {
+                const uploaded = await uploadAsset(
+                    form.brand_logo_media_file,
+                    `${form.name || "producto"} marca`,
+                );
+                brandLogoMediaId = uploaded.id;
             }
 
             const mediaRows = [];
@@ -1656,6 +1764,7 @@ function ProductModal({
                 treatment: form.treatment || null,
                 observations: form.observations || null,
                 main_media_id: mainMediaId,
+                brand_logo_media_id: brandLogoMediaId,
                 technical_sheet_media_id: technicalSheetMediaId,
                 sort_order: form.sort_order || null,
                 is_active: form.is_active,
@@ -1928,8 +2037,41 @@ function ProductModal({
                         />
                     </div>
 
-                    <div className="grid gap-5 xl:grid-cols-2">
+                    <div className="grid gap-5 xl:grid-cols-3">
                         <Field label="Imagen principal">
+                            <div className="mb-4 overflow-hidden rounded-[24px] border border-[#25A7CA]/20 bg-[linear-gradient(135deg,rgba(37,167,202,0.18),rgba(255,255,255,0.98))] shadow-[0_18px_45px_rgba(37,167,202,0.12)]">
+                                <div className="flex flex-col gap-4 p-4">
+                                    <div className="flex items-start gap-3">
+                                        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-white text-[#117a98] shadow-sm">
+                                            <Icon icon="solar:gallery-outline" width={22} />
+                                        </div>
+                                        <div>
+                                            <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#117a98]">
+                                                Recomendación importante
+                                            </p>
+                                            <h3 className="mt-1 text-base font-semibold text-slate-900">
+                                                {PRODUCT_IMAGE_GUIDE.title}
+                                            </h3>
+                                            <p className="mt-2 text-sm font-medium text-slate-700">
+                                                {PRODUCT_IMAGE_GUIDE.detail}
+                                            </p>
+                                            <p className="mt-1 text-sm font-semibold text-slate-900">
+                                                {PRODUCT_IMAGE_GUIDE.limit}
+                                            </p>
+                                            <p className="mt-2 text-sm text-slate-600">
+                                                {PRODUCT_IMAGE_GUIDE.note}
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <div className="rounded-2xl border border-white/70 bg-white/85 px-4 py-3 text-sm font-semibold text-slate-700 shadow-sm">
+                                        Tamaño recomendado
+                                        <div className="mt-1 text-lg font-bold text-[#117a98]">
+                                            391 x 391 px
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                             <input
                                 type="file"
                                 accept="image/*"
@@ -1947,6 +2089,64 @@ function ProductModal({
                                     src={form.main_media_url}
                                     alt={form.name || "Principal"}
                                     className="mt-3 h-56 w-full rounded-2xl border border-slate-200 object-cover"
+                                />
+                            ) : null}
+                        </Field>
+
+                        <Field
+                            label="Logo de marca"
+                            hint="Se usa en la card de productos destacados del home."
+                        >
+                            <div className="mb-4 overflow-hidden rounded-[24px] border border-[#25A7CA]/20 bg-[linear-gradient(135deg,rgba(37,167,202,0.18),rgba(255,255,255,0.98))] shadow-[0_18px_45px_rgba(37,167,202,0.12)]">
+                                <div className="flex flex-col gap-4 p-4">
+                                    <div className="flex items-start gap-3">
+                                        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-white text-[#117a98] shadow-sm">
+                                            <Icon icon="solar:gallery-outline" width={22} />
+                                        </div>
+                                        <div>
+                                            <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#117a98]">
+                                                Recomendación importante
+                                            </p>
+                                            <h3 className="mt-1 text-base font-semibold text-slate-900">
+                                                {PRODUCT_BRAND_LOGO_GUIDE.title}
+                                            </h3>
+                                            <p className="mt-2 text-sm font-medium text-slate-700">
+                                                {PRODUCT_BRAND_LOGO_GUIDE.detail}
+                                            </p>
+                                            <p className="mt-1 text-sm font-semibold text-slate-900">
+                                                {PRODUCT_BRAND_LOGO_GUIDE.limit}
+                                            </p>
+                                            <p className="mt-2 text-sm text-slate-600">
+                                                {PRODUCT_BRAND_LOGO_GUIDE.note}
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <div className="rounded-2xl border border-white/70 bg-white/85 px-4 py-3 text-sm font-semibold text-slate-700 shadow-sm">
+                                        Tamaño recomendado
+                                        <div className="mt-1 text-lg font-bold text-[#117a98]">
+                                            77 x 44 px
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <input
+                                type="file"
+                                accept="image/*"
+                                onChange={(event) =>
+                                    setForm((current) => ({
+                                        ...current,
+                                        brand_logo_media_file:
+                                            event.target.files?.[0] ?? null,
+                                    }))
+                                }
+                                className="block w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 file:mr-4 file:rounded-xl file:border-0 file:bg-[#25A7CA]/10 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-[#117a98] hover:file:bg-[#25A7CA]/15"
+                            />
+                            {form.brand_logo_media_url ? (
+                                <img
+                                    src={form.brand_logo_media_url}
+                                    alt={form.name || "Marca"}
+                                    className="mt-3 h-24 w-full rounded-2xl border border-slate-200 bg-white object-contain p-4"
                                 />
                             ) : null}
                         </Field>

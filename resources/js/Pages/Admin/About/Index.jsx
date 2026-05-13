@@ -7,6 +7,27 @@ import { Icon } from "@iconify/react";
 import axios from "axios";
 import { useEffect, useState } from "react";
 
+const ABOUT_BANNER_GUIDE = {
+    title: "Imagen del banner superior",
+    detail: "Usá una imagen de 1366 x 350 px.",
+    limit: "Peso máximo: 10 MB.",
+    note: "Si respetás esa medida, el banner se va a ver mejor en la parte superior de la página.",
+};
+
+const ABOUT_MAIN_IMAGE_GUIDE = {
+    title: "Imagen principal",
+    detail: "Usá una imagen de 600 x 600 px.",
+    limit: "Peso máximo: 10 MB.",
+    note: "Si respetás esa medida, la imagen principal se va a ver mejor en la página.",
+};
+
+const ABOUT_MEMBERSHIP_LOGO_GUIDE = {
+    title: "Logo de pertenencia",
+    detail: "Usá un logo de 250 x 67 px.",
+    limit: "Peso máximo: 10 MB.",
+    note: "Si mantenés esa proporción, los logos se van a ver más ordenados al final de la página.",
+};
+
 function buildSection(section) {
     return {
         id: section?.id ?? null,
@@ -237,6 +258,7 @@ export default function AboutIndex({ sections, publicAboutUrl }) {
     const uploadMedia = async (file, title) => {
         const payload = new FormData();
         payload.append("file", file);
+        payload.append("type", "image");
         payload.append("title", title || "Nosotros");
 
         const response = await axios.post("/admin/api/media-assets", payload, {
@@ -487,6 +509,39 @@ export default function AboutIndex({ sections, publicAboutUrl }) {
                             </Field>
 
                             <Field label="Imagen del banner">
+                                <div className="mb-4 overflow-hidden rounded-[24px] border border-[#25A7CA]/20 bg-[linear-gradient(135deg,rgba(37,167,202,0.18),rgba(255,255,255,0.98))] shadow-[0_18px_45px_rgba(37,167,202,0.12)]">
+                                    <div className="flex flex-col gap-4 p-4 md:flex-row md:items-center md:justify-between">
+                                        <div className="flex items-start gap-3">
+                                            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-white text-[#117a98] shadow-sm">
+                                                <Icon icon="solar:gallery-outline" width={22} />
+                                            </div>
+                                            <div>
+                                                <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#117a98]">
+                                                    Recomendación importante
+                                                </p>
+                                                <h3 className="mt-1 text-base font-semibold text-slate-900">
+                                                    {ABOUT_BANNER_GUIDE.title}
+                                                </h3>
+                                                <p className="mt-2 text-sm font-medium text-slate-700">
+                                                    {ABOUT_BANNER_GUIDE.detail}
+                                                </p>
+                                                <p className="mt-1 text-sm font-semibold text-slate-900">
+                                                    {ABOUT_BANNER_GUIDE.limit}
+                                                </p>
+                                                <p className="mt-2 text-sm text-slate-600">
+                                                    {ABOUT_BANNER_GUIDE.note}
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        <div className="rounded-2xl border border-white/70 bg-white/85 px-4 py-3 text-sm font-semibold text-slate-700 shadow-sm">
+                                            Tamaño recomendado
+                                            <div className="mt-1 text-lg font-bold text-[#117a98]">
+                                                1366 x 350 px
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                                 <input
                                     type="file"
                                     accept="image/*"
@@ -562,6 +617,39 @@ export default function AboutIndex({ sections, publicAboutUrl }) {
                             </Field>
 
                             <Field label="Imagen del contenido">
+                                <div className="mb-4 overflow-hidden rounded-[24px] border border-[#25A7CA]/20 bg-[linear-gradient(135deg,rgba(37,167,202,0.18),rgba(255,255,255,0.98))] shadow-[0_18px_45px_rgba(37,167,202,0.12)]">
+                                    <div className="flex flex-col gap-4 p-4 md:flex-row md:items-center md:justify-between">
+                                        <div className="flex items-start gap-3">
+                                            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-white text-[#117a98] shadow-sm">
+                                                <Icon icon="solar:gallery-outline" width={22} />
+                                            </div>
+                                            <div>
+                                                <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#117a98]">
+                                                    Recomendación importante
+                                                </p>
+                                                <h3 className="mt-1 text-base font-semibold text-slate-900">
+                                                    {ABOUT_MAIN_IMAGE_GUIDE.title}
+                                                </h3>
+                                                <p className="mt-2 text-sm font-medium text-slate-700">
+                                                    {ABOUT_MAIN_IMAGE_GUIDE.detail}
+                                                </p>
+                                                <p className="mt-1 text-sm font-semibold text-slate-900">
+                                                    {ABOUT_MAIN_IMAGE_GUIDE.limit}
+                                                </p>
+                                                <p className="mt-2 text-sm text-slate-600">
+                                                    {ABOUT_MAIN_IMAGE_GUIDE.note}
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        <div className="rounded-2xl border border-white/70 bg-white/85 px-4 py-3 text-sm font-semibold text-slate-700 shadow-sm">
+                                            Tamaño recomendado
+                                            <div className="mt-1 text-lg font-bold text-[#117a98]">
+                                                600 x 600 px
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                                 <input
                                     type="file"
                                     accept="image/*"
@@ -841,6 +929,39 @@ export default function AboutIndex({ sections, publicAboutUrl }) {
                                                 </Field>
 
                                                 <Field label="Logo">
+                                                    <div className="mb-4 overflow-hidden rounded-[24px] border border-[#25A7CA]/20 bg-[linear-gradient(135deg,rgba(37,167,202,0.18),rgba(255,255,255,0.98))] shadow-[0_18px_45px_rgba(37,167,202,0.12)]">
+                                                        <div className="flex flex-col gap-4 p-4">
+                                                            <div className="flex items-start gap-3">
+                                                                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-white text-[#117a98] shadow-sm">
+                                                                    <Icon icon="solar:gallery-outline" width={22} />
+                                                                </div>
+                                                                <div>
+                                                                    <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#117a98]">
+                                                                        Recomendación importante
+                                                                    </p>
+                                                                    <h3 className="mt-1 text-base font-semibold text-slate-900">
+                                                                        {ABOUT_MEMBERSHIP_LOGO_GUIDE.title}
+                                                                    </h3>
+                                                                    <p className="mt-2 text-sm font-medium text-slate-700">
+                                                                        {ABOUT_MEMBERSHIP_LOGO_GUIDE.detail}
+                                                                    </p>
+                                                                    <p className="mt-1 text-sm font-semibold text-slate-900">
+                                                                        {ABOUT_MEMBERSHIP_LOGO_GUIDE.limit}
+                                                                    </p>
+                                                                    <p className="mt-2 text-sm text-slate-600">
+                                                                        {ABOUT_MEMBERSHIP_LOGO_GUIDE.note}
+                                                                    </p>
+                                                                </div>
+                                                            </div>
+
+                                                            <div className="rounded-2xl border border-white/70 bg-white/85 px-4 py-3 text-sm font-semibold text-slate-700 shadow-sm">
+                                                                Tamaño recomendado
+                                                                <div className="mt-1 text-lg font-bold text-[#117a98]">
+                                                                    250 x 67 px
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                     <input
                                                         type="file"
                                                         accept="image/*"

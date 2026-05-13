@@ -35,7 +35,7 @@ class HomeController extends Controller
                 ->where('is_active', true)
                 ->orderBy('sort_order')
                 ->get(),
-            'featured_products' => Product::query()->with(['family', 'subfamily', 'mainMedia'])->where('is_featured_home', true)->where('is_active', true)->orderBy('sort_order')->get(),
+            'featured_products' => Product::query()->with(['family', 'subfamily', 'mainMedia', 'brandLogoMedia'])->where('is_featured_home', true)->where('is_active', true)->orderBy('sort_order')->get(),
             'posts' => Post::query()->with(['category', 'coverMedia'])->where('show_on_home', true)->where('is_active', true)->latest('published_at')->limit(6)->get(),
             'partners' => Partner::query()->with('logo')->where('show_on_home', true)->where('is_active', true)->orderBy('sort_order')->get(),
             'clients' => Client::query()->with(['category', 'logo'])->where('show_on_home', true)->where('is_active', true)->orderBy('sort_order')->get(),

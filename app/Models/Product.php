@@ -24,6 +24,7 @@ class Product extends Model
         'treatment',
         'observations',
         'main_media_id',
+        'brand_logo_media_id',
         'technical_sheet_media_id',
         'sort_order',
         'is_active',
@@ -59,6 +60,11 @@ class Product extends Model
     public function technicalSheet(): BelongsTo
     {
         return $this->belongsTo(MediaAsset::class, 'technical_sheet_media_id');
+    }
+
+    public function brandLogoMedia(): BelongsTo
+    {
+        return $this->belongsTo(MediaAsset::class, 'brand_logo_media_id');
     }
 
     public function media(): HasMany
