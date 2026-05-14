@@ -427,12 +427,17 @@ export default function Sidebar({
 
     const whatsappSection = {
         key: "whatsapp",
-        title: "Botón de WhatsApp",
-        description: "Acceso directo en la web",
+        title: "Redes sociales y WhatsApp flotante",
+        description: "Footer y acceso directo en la web",
         icon: "solar:phone-calling-rounded-outline",
         children: [
             {
-                title: "Editar botón de WhatsApp",
+                title: "Redes sociales",
+                url: "/admin/social-links",
+                match: "/admin/social-links",
+            },
+            {
+                title: "WhatsApp flotante",
                 url: "/admin/whatsapp",
                 match: "/admin/whatsapp",
             },
