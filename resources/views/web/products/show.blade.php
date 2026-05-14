@@ -133,17 +133,39 @@
 
             <div class="products-show__content">
                 <div class="products-show__hero">
-                    <div class="products-show__gallery">
-                        <div class="products-show__main-image">
+                    <div class="products-show__gallery" data-product-gallery data-autoplay-delay="2000">
+                        <div class="products-show__main-image" data-product-gallery-main>
                             @if($selectedMedia)
-                                <img src="{{ media_asset_url($selectedMedia) }}" alt="{{ $selectedMedia->alt_text ?: $product->name }}">
+                                <div class="products-show__main-image-stage">
+                                    <img
+                                        src="{{ media_asset_url($selectedMedia) }}"
+                                        alt="{{ $selectedMedia->alt_text ?: $product->name }}"
+                                        class="products-show__main-image-layer is-active"
+                                        data-gallery-image-layer="primary"
+                                    >
+                                    <img
+                                        src="{{ media_asset_url($selectedMedia) }}"
+                                        alt="{{ $selectedMedia->alt_text ?: $product->name }}"
+                                        class="products-show__main-image-layer"
+                                        data-gallery-image-layer="secondary"
+                                        aria-hidden="true"
+                                    >
+                                </div>
                             @endif
                         </div>
 
                         @if($gallery->count() > 0)
-                            <div class="products-show__thumbs">
+                            <div class="products-show__thumbs" data-product-gallery-thumbs>
                                 @foreach($gallery as $media)
-                                    <a href="{{ route('web.products.show', [$selectedFamily->slug, $product->slug]) }}?media={{ $media->id }}" class="products-show__thumb {{ $selectedMedia && $selectedMedia->id === $media->id ? 'is-active' : '' }}">
+                                    <a
+                                        href="{{ route('web.products.show', [$selectedFamily->slug, $product->slug]) }}?media={{ $media->id }}"
+                                        class="products-show__thumb {{ $selectedMedia && $selectedMedia->id === $media->id ? 'is-active' : '' }}"
+                                        data-gallery-thumb
+                                        data-media-id="{{ $media->id }}"
+                                        data-media-src="{{ media_asset_url($media) }}"
+                                        data-media-alt="{{ $media->alt_text ?: $product->name }}"
+                                        aria-current="{{ $selectedMedia && $selectedMedia->id === $media->id ? 'true' : 'false' }}"
+                                    >
                                         <img src="{{ media_asset_url($media) }}" alt="{{ $media->alt_text ?: $product->name }}">
                                     </a>
                                 @endforeach
@@ -199,9 +221,21 @@
                             @endif
                         </div>
 
-                        <div class="products-show__actions">
-                            <a href="{{ route('web.products.technical-sheet', [$selectedFamily->slug, $product->slug]) }}" class="products-show__button products-show__button--outline" target="_blank" rel="noopener"><span>Ficha técnica</span></a>
-                            <a href="{{ route('web.quote.show', ['product' => $product->id]) }}" class="products-show__button products-show__button--solid"><span>Consultar</span></a>
+                        <div class="products-show__footer">
+                            @if($product->brandLogoMedia)
+                                <div class="products-show__brand-logo-wrap">
+                                    <img
+                                        src="{{ media_asset_url($product->brandLogoMedia) }}"
+                                        alt="{{ $product->brandLogoMedia->alt_text ?: ($product->name.' marca') }}"
+                                        class="products-show__brand-logo"
+                                    >
+                                </div>
+                            @endif
+
+                            <div class="products-show__actions">
+                                <a href="{{ route('web.products.technical-sheet', [$selectedFamily->slug, $product->slug]) }}" class="products-show__button products-show__button--outline" target="_blank" rel="noopener"><span>Ficha técnica</span></a>
+                                <a href="{{ route('web.quote.show', ['product' => $product->id]) }}" class="products-show__button products-show__button--solid"><span>Consultar</span></a>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -400,7 +434,7 @@
                                         default => ($relatedProduct->subfamily?->accent_color ?: '#8BCFDE'),
                                     };
                                 @endphp
-                                <a href="{{ route('web.products.show', [$selectedFamily->slug, $relatedProduct->slug]) }}" class="products-show__related-link">
+                                <a href="{{ route('web.products.show', [$relatedProduct->family?->slug ?? $selectedFamily->slug, $relatedProduct->slug]) }}" class="products-show__related-link">
                                     <article class="products-show__related-card">
                                         <div class="products-show__related-media">
                                             <span class="products-show__related-plus" aria-hidden="true"></span>

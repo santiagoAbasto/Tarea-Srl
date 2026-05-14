@@ -93,46 +93,42 @@ body {
     margin-bottom: 16px;
 }
 
-.body {
-    display: table;
+.overview-table {
     width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
 }
 
-.body__left {
-    display: table-cell;
-    width: 36%;
+.overview-table td {
     vertical-align: top;
+}
+
+.overview__content {
+    width: 58%;
     padding-right: 20px;
 }
 
-.body__right {
-    display: table-cell;
-    width: 64%;
-    vertical-align: top;
+.overview__media {
+    width: 42%;
+}
+
+.overview__media,
+.catalog,
+.footer-flow {
+    page-break-inside: avoid;
 }
 
 .img-main {
     text-align: center;
-    margin-bottom: 15px;
+    margin-bottom: 0;
+    padding: 10px 10px 0;
+    border: 1px solid #E5E7EB;
+    background: #FFF;
 }
 
 .img-main img {
     max-width: 100%;
-    max-height: 220px;
-    width: auto;
-    height: auto;
-    display: block;
-    margin: 0 auto;
-}
-
-.img-extra {
-    text-align: center;
-    margin-bottom: 15px;
-}
-
-.img-extra img {
-    max-width: 100%;
-    max-height: 180px;
+    max-height: 210px;
     width: auto;
     height: auto;
     display: block;
@@ -192,23 +188,51 @@ body {
     line-height: 1.7;
 }
 
-.gallery {
-    margin-top: 16px;
+.gallery-shell {
+    margin-top: 14px;
+    page-break-inside: avoid;
 }
 
-.gallery img {
-    width: 72px;
-    height: 72px;
-    object-fit: contain;
+.gallery {
+    margin-top: 0;
+}
+
+.gallery-table {
+    width: auto;
+    border-collapse: separate;
+    border-spacing: 0 6px;
+    margin-left: 0;
+}
+
+.gallery-table td {
+    padding: 0 6px 0 0;
+    vertical-align: top;
+}
+
+.gallery-table td:last-child {
+    padding-right: 0;
+}
+
+.gallery-thumb {
+    width: 58px;
+    height: 58px;
     border: 1px solid #DBDADA;
-    margin-right: 8px;
-    margin-bottom: 8px;
-    display: inline-block;
+    background: #FFF;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.gallery-thumb img {
+    max-width: 50px;
+    max-height: 50px;
+    width: auto;
+    height: auto;
+    display: block;
+    margin: 4px auto;
 }
 
 .catalog {
-    margin-top: 22px;
-    page-break-inside: auto;
+    margin-top: 18px;
 }
 
 .catalog__title {
@@ -262,7 +286,7 @@ body {
 }
 
 .footer-flow {
-    margin-top: 80px;
+    margin-top: 40px;
     border-top: 1px solid #E5E7EB;
     padding-top: 10px;
     font-size: 8px;
@@ -413,10 +437,10 @@ body {
         }
     }
 
-    $extraImages = $gallery
-        ->filter(fn ($media) => !$product->mainMedia || $media->id !== $product->mainMedia->id)
+    $galleryImages = $gallery
         ->filter(fn ($media) => filled($galleryDataUris[$media->id] ?? null))
         ->values();
+    $galleryChunks = $galleryImages->chunk(5);
 @endphp
 
 <div class="sheet">
@@ -451,53 +475,56 @@ body {
 </div>
 <hr class="hero__divider">
 
-<div class="body">
-    <div class="body__left">
-        <div class="img-main">
-            @if($mainImageDataUri)
-                <img src="{{ $mainImageDataUri }}" alt="{{ $productName }}">
+<table class="overview-table">
+    <tr>
+        <td class="overview__content">
+            @if($detailRows->isNotEmpty())
+                <div class="sec">Especificaciones</div>
+                <table class="dt">
+                    @foreach($detailRows as $row)
+                        <tr>
+                            <td>{{ $row['label'] }}</td>
+                            <td>{{ $row['value'] }}</td>
+                        </tr>
+                    @endforeach
+                </table>
             @endif
-        </div>
 
-        @if($extraImages->isNotEmpty())
-            @foreach($extraImages as $media)
-                <div class="img-extra">
-                    <img src="{{ $galleryDataUris[$media->id] }}" alt="{{ $media->alt_text ?: $productName }}">
-                </div>
-            @endforeach
-        @endif
-    </div>
+            @if($product->description)
+                <div class="sec">Descripción</div>
+                <div class="desc">{!! nl2br(e($product->description)) !!}</div>
+            @endif
+        </td>
+        <td class="overview__media">
+            <div class="img-main">
+                @if($mainImageDataUri)
+                    <img src="{{ $mainImageDataUri }}" alt="{{ $productName }}">
+                @endif
+            </div>
+        </td>
+    </tr>
+</table>
 
-    <div class="body__right">
-        @if($detailRows->isNotEmpty())
-            <div class="sec">Especificaciones</div>
-            <table class="dt">
-                @foreach($detailRows as $row)
+@if($galleryImages->count() > 1)
+    <div class="gallery-shell">
+        <div class="sec">Galería</div>
+        <div class="gallery">
+            <table class="gallery-table">
+                @foreach($galleryChunks as $chunk)
                     <tr>
-                        <td>{{ $row['label'] }}</td>
-                        <td>{{ $row['value'] }}</td>
+                        @foreach($chunk as $media)
+                            <td>
+                                <div class="gallery-thumb">
+                                    <img src="{{ $galleryDataUris[$media->id] }}" alt="{{ $media->alt_text ?: $productName }}">
+                                </div>
+                            </td>
+                        @endforeach
                     </tr>
                 @endforeach
             </table>
-        @endif
-
-        @if($product->description)
-            <div class="sec">Descripción</div>
-            <div class="desc">{!! nl2br(e($product->description)) !!}</div>
-        @endif
-
-        @if($gallery->count() > 1)
-            <div class="sec">Galería</div>
-            <div class="gallery">
-                @foreach($gallery as $media)
-                    @if(filled($galleryDataUris[$media->id] ?? null))
-                        <img src="{{ $galleryDataUris[$media->id] }}" alt="{{ $media->alt_text ?: $productName }}">
-                    @endif
-                @endforeach
-            </div>
-        @endif
+        </div>
     </div>
-</div>
+@endif
 
 @if($specTable && $columns->isNotEmpty() && $specTable->rows->isNotEmpty())
     <div class="catalog">

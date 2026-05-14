@@ -583,3 +583,232 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
 });
+
+
+/* =============================================
+   PRODUCT SHOW GALLERY
+   - 5 miniaturas visibles por fila
+   - Scroll interno desde la 6ta
+   - Auto-play cada 3s
+   - Click en miniatura pausa
+   - Click fuera de miniaturas reanuda
+============================================= */
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    const galleries = document.querySelectorAll("[data-product-gallery]");
+
+    galleries.forEach((gallery) => {
+        const main = gallery.querySelector("[data-product-gallery-main]");
+        const thumbsRail = gallery.querySelector("[data-product-gallery-thumbs]");
+        const thumbs = Array.from(gallery.querySelectorAll("[data-gallery-thumb]"));
+
+        if (!main || !thumbsRail || thumbs.length === 0) {
+            return;
+        }
+
+        const primaryLayer = gallery.querySelector('[data-gallery-image-layer="primary"]');
+        const secondaryLayer = gallery.querySelector('[data-gallery-image-layer="secondary"]');
+
+        if (!primaryLayer || !secondaryLayer) {
+            return;
+        }
+
+        const autoplayDelay = Number.parseInt(gallery.dataset.autoplayDelay || "3000", 10);
+        let activeIndex = Math.max(thumbs.findIndex((thumb) => thumb.classList.contains("is-active")), 0);
+        let currentLayer = primaryLayer;
+        let nextLayer = secondaryLayer;
+        let autoplayTimer = null;
+        let manualSelection = false;
+        let transitionCleanupTimer = null;
+        const preloadedSources = new Set(
+            thumbs
+                .map((thumb) => thumb.dataset.mediaSrc || "")
+                .filter(Boolean)
+                .slice(0, 1)
+        );
+
+        function syncThumbState(index) {
+            thumbs.forEach((thumb, thumbIndex) => {
+                const isActive = thumbIndex === index;
+                thumb.classList.toggle("is-active", isActive);
+                thumb.setAttribute("aria-current", isActive ? "true" : "false");
+            });
+        }
+
+        function scrollThumbIntoView(index) {
+            const thumb = thumbs[index];
+
+            if (!thumb) {
+                return;
+            }
+
+            thumb.scrollIntoView({
+                behavior: "smooth",
+                block: "nearest",
+                inline: "nearest",
+            });
+        }
+
+        function imagePayloadFor(index) {
+            const thumb = thumbs[index];
+
+            if (!thumb) {
+                return null;
+            }
+
+            return {
+                src: thumb.dataset.mediaSrc || "",
+                alt: thumb.dataset.mediaAlt || "",
+            };
+        }
+
+        function cleanupLeavingLayer() {
+            if (transitionCleanupTimer) {
+                window.clearTimeout(transitionCleanupTimer);
+            }
+
+            transitionCleanupTimer = window.setTimeout(() => {
+                nextLayer.classList.remove("is-leaving");
+                nextLayer.setAttribute("aria-hidden", "true");
+            }, 720);
+        }
+
+        function preloadImage(payload) {
+            if (!payload || !payload.src || preloadedSources.has(payload.src)) {
+                return Promise.resolve();
+            }
+
+            return new Promise((resolve) => {
+                const image = new Image();
+
+                image.onload = () => {
+                    preloadedSources.add(payload.src);
+                    resolve();
+                };
+
+                image.onerror = () => resolve();
+                image.src = payload.src;
+
+                if (typeof image.decode === "function") {
+                    image.decode()
+                        .then(() => {
+                            preloadedSources.add(payload.src);
+                            resolve();
+                        })
+                        .catch(() => {});
+                }
+            });
+        }
+
+        async function renderImage(index, options) {
+            const settings = options || {};
+            const animate = settings.animate !== false;
+            const payload = imagePayloadFor(index);
+
+            if (!payload || !payload.src) {
+                return;
+            }
+
+            syncThumbState(index);
+            scrollThumbIntoView(index);
+
+            if (activeIndex === index && currentLayer.getAttribute("src") === payload.src) {
+                return;
+            }
+
+            await preloadImage(payload);
+
+            const incomingLayer = nextLayer;
+            const outgoingLayer = currentLayer;
+
+            incomingLayer.setAttribute("src", payload.src);
+            incomingLayer.setAttribute("alt", payload.alt);
+            incomingLayer.removeAttribute("aria-hidden");
+            incomingLayer.classList.remove("is-leaving");
+
+            if (!animate) {
+                outgoingLayer.classList.remove("is-active", "is-leaving");
+                outgoingLayer.setAttribute("aria-hidden", "true");
+                incomingLayer.classList.add("is-active");
+                currentLayer = incomingLayer;
+                nextLayer = outgoingLayer;
+                activeIndex = index;
+                return;
+            }
+
+            // Fuerza el reflow para que la transición siempre dispare.
+            void incomingLayer.offsetWidth;
+
+            window.requestAnimationFrame(() => {
+                outgoingLayer.classList.add("is-leaving");
+                outgoingLayer.classList.remove("is-active");
+                incomingLayer.classList.add("is-active");
+            });
+
+            currentLayer = incomingLayer;
+            nextLayer = outgoingLayer;
+            activeIndex = index;
+
+            cleanupLeavingLayer();
+        }
+
+        function stopAutoplay() {
+            if (autoplayTimer) {
+                window.clearTimeout(autoplayTimer);
+                autoplayTimer = null;
+            }
+        }
+
+        function queueAutoplay() {
+            stopAutoplay();
+
+            if (manualSelection || thumbs.length <= 1) {
+                return;
+            }
+
+            autoplayTimer = window.setTimeout(() => {
+                renderImage((activeIndex + 1) % thumbs.length, { animate: true });
+                queueAutoplay();
+            }, autoplayDelay);
+        }
+
+        function pauseOnManualSelection() {
+            manualSelection = true;
+            stopAutoplay();
+        }
+
+        function resumeAutoplay() {
+            if (!manualSelection) {
+                return;
+            }
+
+            manualSelection = false;
+            queueAutoplay();
+        }
+
+        thumbs.forEach((thumb, index) => {
+            thumb.addEventListener("click", (event) => {
+                event.preventDefault();
+                pauseOnManualSelection();
+                renderImage(index, { animate: true });
+            });
+        });
+
+        document.addEventListener("click", (event) => {
+            if (!manualSelection) {
+                return;
+            }
+
+            if (event.target.closest("[data-gallery-thumb]")) {
+                return;
+            }
+
+            resumeAutoplay();
+        });
+
+        renderImage(activeIndex, { animate: false });
+        queueAutoplay();
+    });
+
+});

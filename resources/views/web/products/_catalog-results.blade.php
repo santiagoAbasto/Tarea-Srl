@@ -28,17 +28,20 @@
             @endphp
             <a href="{{ route('web.products.show', [$product->family->slug, $product->slug]) }}" class="products-catalog__tile-link">
                 <article class="products-catalog__tile">
-                    <div class="products-catalog__tile-media">
+                    <div class="products-catalog__tile-media {{ $product->brandLogoMedia ? 'products-catalog__tile-media--with-brand' : '' }}">
                         <span class="products-catalog__tile-plus" aria-hidden="true"></span>
-                        @if($product->mainMedia)
-                            <img src="{{ media_asset_url($product->mainMedia) }}" alt="{{ $product->name }}">
-                        @endif
+                        <div class="products-catalog__tile-image-wrap">
+                            @if($product->mainMedia)
+                                <img src="{{ media_asset_url($product->mainMedia) }}" alt="{{ $product->name }}">
+                            @endif
+                        </div>
                         @if($product->brandLogoMedia)
-                            <span
-                                class="products-catalog__brand-logo"
-                                aria-hidden="true"
-                                style="background-image: url('{{ media_asset_url($product->brandLogoMedia) }}');"
-                            ></span>
+                            <span class="products-catalog__brand-logo" aria-hidden="true">
+                                <img
+                                    src="{{ media_asset_url($product->brandLogoMedia) }}"
+                                    alt=""
+                                >
+                            </span>
                         @endif
                     </div>
                     <div class="products-catalog__tile-body">

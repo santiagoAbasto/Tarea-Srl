@@ -106,6 +106,7 @@ class ProductCatalogController extends Controller
                 'family',
                 'subfamily',
                 'mainMedia',
+                'brandLogoMedia',
                 'technicalSheet',
                 'media.media',
                 'specTables.columns',
@@ -270,7 +271,20 @@ class ProductCatalogController extends Controller
 
     protected function firstCompleteSpecTable(Product $product)
     {
-        return $product->specTables->first(fn ($table) => $this->specTableIsComplete($table));
+        $completeTable = $product->specTables->first(fn ($table) => $this->specTableIsComplete($table));
+
+        if ($completeTable) {
+            return $completeTable;
+        }
+
+        return $product->specTables
+            ->map(fn ($table) => [
+                'table' => $table,
+                'score' => $this->specTableCompletenessScore($table),
+            ])
+            ->filter(fn (array $candidate) => $this->specTableCanUseFallback($candidate['table'], $candidate['score']))
+            ->sortByDesc('score')
+            ->first()['table'] ?? null;
     }
 
     protected function specTableIsComplete($table): bool
@@ -301,6 +315,55 @@ class ProductCatalogController extends Controller
         }
 
         return true;
+    }
+
+    protected function specTableCompletenessScore($table): float
+    {
+        $columns = $table->columns->sortBy('sort_order')->values();
+        $rows = $table->rows->sortBy('sort_order')->values();
+
+        if ($columns->isEmpty() || $rows->isEmpty()) {
+            return 0.0;
+        }
+
+        if ($columns->every(fn ($column) => blank(trim((string) $column->label)))) {
+            return 0.0;
+        }
+
+        $totalCells = max(1, $columns->count() * $rows->count());
+        $filledCells = 0;
+
+        foreach ($rows as $row) {
+            $valuesByColumn = $row->values->keyBy('product_spec_column_id');
+
+            foreach ($columns as $column) {
+                $value = $valuesByColumn->get($column->id)?->value;
+
+                if (filled(is_string($value) ? trim($value) : $value)) {
+                    $filledCells++;
+                }
+            }
+        }
+
+        return $filledCells / $totalCells;
+    }
+
+    protected function specTableCanUseFallback($table, float $score): bool
+    {
+        $columns = $table->columns->sortBy('sort_order')->values();
+        $rows = $table->rows->sortBy('sort_order')->values();
+
+        if ($columns->isEmpty() || $rows->isEmpty()) {
+            return false;
+        }
+
+        if ($columns->contains(fn ($column) => blank(trim((string) $column->label)))) {
+            return false;
+        }
+
+        // Solo aceptamos el fallback si la tabla esta casi completa,
+        // para no romper el formato general del PDF con estructuras pobres.
+        return $score >= 0.9;
     }
 
     protected function mediaDataUri(MediaAsset $media): ?string

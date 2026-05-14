@@ -287,15 +287,18 @@
                 <div class="cards-4 cards-4--featured-products">
                     @foreach($featured_products as $product)
                         <a href="{{ route('web.products.show', [$product->family?->slug ?? 'todos-los-productos', $product->slug]) }}" class="product-tile product-tile--link">
-                            <div class="product-tile__media">
+                            <div class="product-tile__media {{ $product->brandLogoMedia ? 'product-tile__media--with-brand' : '' }}">
                                 <span class="product-tile__plus" aria-hidden="true"></span>
-                                <img src="{{ media_asset_url($product->mainMedia) }}" alt="{{ $product->name }}">
+                                <div class="product-tile__image-wrap">
+                                    <img src="{{ media_asset_url($product->mainMedia) }}" alt="{{ $product->name }}">
+                                </div>
                                 @if($product->brandLogoMedia)
-                                    <span
-                                        class="product-tile__brand-logo"
-                                        aria-hidden="true"
-                                        style="background-image: url('{{ media_asset_url($product->brandLogoMedia) }}');"
-                                    ></span>
+                                    <span class="product-tile__brand-logo" aria-hidden="true">
+                                        <img
+                                            src="{{ media_asset_url($product->brandLogoMedia) }}"
+                                            alt=""
+                                        >
+                                    </span>
                                 @endif
                             </div>
                             <div class="product-tile__body">
