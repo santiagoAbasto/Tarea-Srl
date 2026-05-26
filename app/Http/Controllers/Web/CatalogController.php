@@ -64,7 +64,9 @@ class CatalogController extends Controller
             'catalog_request_id' => $catalogRequest->id,
         ], $request);
 
-        $this->sendCatalogNotification($catalogRequest);
+        app()->terminating(function () use ($catalogRequest): void {
+            $this->sendCatalogNotification($catalogRequest);
+        });
 
         if ($request->expectsJson()) {
             return response()->json($catalogRequest, 201);

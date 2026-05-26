@@ -34,7 +34,7 @@
     display: flex;
     align-items: center;
     gap: 14px;
-    margin-left: 62px;
+    margin-left: auto;
     font-family: "Montserrat", sans-serif;
     font-size: 14px;
     font-style: normal;
@@ -58,6 +58,17 @@
 
 .nav a.is-active {
     font-weight: 700;
+}
+
+.site-header .nav a[href$="/catalogo"],
+.site-header .nav a[href$="/clientes"],
+.site-header .nav a[href$="/representadas"],
+.site-header .nav a[href$="/novedades"],
+.nav-mobile__nav a[href$="/catalogo"],
+.nav-mobile__nav a[href$="/clientes"],
+.nav-mobile__nav a[href$="/representadas"],
+.nav-mobile__nav a[href$="/novedades"] {
+    display: none;
 }
 
 .nav__search {

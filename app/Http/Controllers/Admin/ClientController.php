@@ -15,7 +15,9 @@ use Illuminate\Validation\Rule;
 
 class ClientController extends Controller
 {
-    use HandlesAdminCrud;
+    use HandlesAdminCrud {
+        mutateValidated as baseMutateValidated;
+    }
 
     protected function modelClass(): string
     {
@@ -94,7 +96,7 @@ class ClientController extends Controller
 
     protected function mutateValidated(Request $request, array $validated, ?Model $model = null): array
     {
-        $validated = parent::mutateValidated($request, $validated, $model);
+        $validated = $this->baseMutateValidated($request, $validated, $model);
         $validated['client_category_ids'] = array_values(array_unique(array_map('intval', $validated['client_category_ids'] ?? [])));
 
         if (! isset($validated['client_category_id']) && ! empty($validated['client_category_ids'])) {

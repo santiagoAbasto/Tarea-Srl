@@ -1,4 +1,4 @@
-import defaultTheme from 'tailwindcss/defaultTheme';
+import defaultTheme from 'tailwindcss/defaultTheme.js';
 import forms from '@tailwindcss/forms';
 
 /** @type {import('tailwindcss').Config} */
@@ -8,12 +8,13 @@ export default {
         './storage/framework/views/*.php',
         './resources/views/**/*.blade.php',
         './resources/js/**/*.jsx',
+        './resources/js/**/*.tsx',
     ],
 
     theme: {
         extend: {
             fontFamily: {
-                sans: ['Figtree', ...defaultTheme.fontFamily.sans],
+                sans: ['Montserrat', ...defaultTheme.fontFamily.sans],
             },
         },
     },

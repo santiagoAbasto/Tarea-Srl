@@ -997,10 +997,8 @@
 }
 
 .products-show__button span {
-    width: 170px;
-    flex-shrink: 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    max-width: 100%;
+    flex-shrink: 1;
     white-space: nowrap;
 }
 

@@ -62,7 +62,9 @@ class ContactController extends Controller
             'contact_request_id' => $contactRequest->id,
         ], $request);
 
-        $this->sendContactNotification($contactRequest);
+        app()->terminating(function () use ($contactRequest): void {
+            $this->sendContactNotification($contactRequest);
+        });
 
         return redirect()
             ->route('web.contact.show')

@@ -421,10 +421,13 @@
                     <h3 class="footer__title">Secciones</h3>
                     <div class="footer__links">
                         <a href="{{ route('web.about') }}">Nosotros</a>
-                        <a href="{{ route('web.news.index') }}">Novedades</a>
                         <a href="{{ route('web.products.index') }}">Productos</a>
-                        <a href="{{ route('web.quote.show') }}">Presupuesto</a>
+                        <a href="{{ route('web.catalog.show') }}">Catálogo</a>
                         <a href="{{ route('web.quality') }}">Calidad</a>
+                        <a href="{{ route('web.clients.index') }}">Clientes</a>
+                        <a href="{{ route('web.partners.index') }}">Representadas</a>
+                        <a href="{{ route('web.news.index') }}">Novedades</a>
+                        <a href="{{ route('web.quote.show') }}">Presupuesto</a>
                         <a href="{{ route('web.contact.show') }}">Contacto</a>
                     </div>
                 </div>

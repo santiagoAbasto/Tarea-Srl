@@ -1,9 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=DM+Sans:wght@400;500;700&family=Montserrat:wght@400;500;600;700&family=Raleway:wght@400&display=swap');
-
-@import "tailwindcss";
-
 @import "./pages/auth.css";
 
-@theme {
-  --font-sans: "Montserrat", ui-sans-serif, system-ui;
-}
+@tailwind base;
+@tailwind components;
+@tailwind utilities;

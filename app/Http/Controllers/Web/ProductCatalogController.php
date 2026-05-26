@@ -159,6 +159,7 @@ class ProductCatalogController extends Controller
         $family = ProductFamily::query()
             ->where('slug', $familySlug)
             ->firstOrFail();
+        $family->setAttribute('accent_color', $this->catalogAccentColorFor($family->slug) ?? $family->accent_color);
 
         $product = Product::query()
             ->with([
@@ -173,16 +174,27 @@ class ProductCatalogController extends Controller
             ->where('product_family_id', $family->id)
             ->where('slug', $productSlug)
             ->firstOrFail();
+        $product->setRelation('family', $family);
+
+        if ($product->subfamily) {
+            $product->subfamily->setAttribute(
+                'accent_color',
+                $this->catalogSubfamilyAccentColorFor($product->subfamily->slug) ?? $product->subfamily->accent_color
+            );
+        }
 
         $gallery = $this->productGallery($product);
         $specTable = $this->firstCompleteSpecTable($product);
+        $mainImage = $product->mainMedia ?: $gallery->first();
+        $mapImage = $gallery
+            ->first(fn ($media) => $mainImage === null || $media->id !== $mainImage->id);
 
         $pdf = Pdf::loadView('web.products.technical-sheet', [
             'product' => $product,
             'gallery' => $gallery,
             'specTable' => $specTable,
-            'mainImageDataUri' => $product->mainMedia ? $this->mediaDataUri($product->mainMedia) : null,
-            'galleryDataUris' => $gallery->mapWithKeys(fn ($media) => [$media->id => $this->mediaDataUri($media)]),
+            'mainImageDataUri' => $mainImage ? $this->mediaDataUri($mainImage) : null,
+            'mapImageDataUri' => $mapImage ? $this->mediaDataUri($mapImage) : null,
         ])->setPaper('a4', 'portrait');
 
         return $pdf->stream($product->slug.'-ficha-tecnica.pdf');

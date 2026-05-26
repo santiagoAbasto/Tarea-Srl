@@ -2,6 +2,14 @@
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
 <meta charset="UTF-8">
+@php
+    $accentColor = $product->subfamily?->accent_color ?: $product->family?->accent_color ?: '#093E66';
+    $accentHex = ltrim($accentColor, '#');
+    $accentRgb = strlen($accentHex) === 6
+        ? implode(', ', [hexdec(substr($accentHex, 0, 2)), hexdec(substr($accentHex, 2, 2)), hexdec(substr($accentHex, 4, 2))])
+        : '9, 62, 102';
+    $accentSoft = 'rgba('.$accentRgb.', 0.10)';
+@endphp
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -11,13 +19,14 @@
 
 body {
     font-family: DejaVu Sans, sans-serif;
-    font-size: 9px;
-    color: #1A181C;
+    font-size: 10.8px;
+    color: #172033;
     background: #FFF;
 }
 
 .sheet {
-    padding: 56px 56px 48px 56px;
+    padding: 24px 36px 18px;
+    background: #FFF;
 }
 
 .pagenum:before { content: counter(page); }
@@ -25,9 +34,9 @@ body {
 .hd {
     display: table;
     width: 100%;
-    padding-bottom: 10px;
-    margin-bottom: 16px;
-    border-bottom: 2px solid #093E66;
+    padding-bottom: 8px;
+    margin-bottom: 9px;
+    border-bottom: 1px solid #DDE4EC;
 }
 
 .hd__l {
@@ -43,59 +52,110 @@ body {
     text-align: right;
 }
 
+.doc-title {
+    display: inline-block;
+    padding: 7px 11px;
+    color: #FFF;
+    background: {{ $accentColor }};
+    font-size: 15px;
+    font-weight: bold;
+    letter-spacing: 1.3px;
+    text-transform: uppercase;
+}
+
+.doc-subtitle {
+    margin-top: 5px;
+    color: #6B7280;
+    font-size: 7.8px;
+    font-weight: bold;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
 .hero {
     display: table;
     width: 100%;
-    margin-bottom: 14px;
+    margin-bottom: 7px;
+    border-collapse: separate;
+    border-spacing: 0;
 }
 
 .hero__l {
     display: table-cell;
-    vertical-align: middle;
-    width: 65%;
+    vertical-align: top;
+    width: 56%;
+    padding: 9px 16px 9px 0;
 }
 
 .hero__r {
     display: table-cell;
-    vertical-align: middle;
-    width: 35%;
-    text-align: right;
+    vertical-align: top;
+    width: 44%;
+    padding: 8px 0 8px 16px;
+    border-left: 3px solid {{ $accentColor }};
+    text-align: left;
 }
 
 .hero__brand-label {
-    font-size: 7.5px;
+    font-size: 8.2px;
     font-weight: bold;
-    color: #9CA3AF;
-    letter-spacing: 2px;
+    color: {{ $accentColor }};
+    letter-spacing: 1.8px;
     text-transform: uppercase;
-    margin-bottom: 4px;
+    margin-bottom: 5px;
 }
 
 .hero__code {
-    font-size: 22px;
+    font-size: 20px;
     font-weight: bold;
-    color: #093E66;
-    letter-spacing: 0.5px;
-    line-height: 1;
+    color: {{ $accentColor }};
+    letter-spacing: 0.2px;
+    line-height: 1.12;
 }
 
 .hero__name {
     font-size: 9px;
-    color: #6B7280;
-    margin-top: 5px;
+    color: #5C6677;
+    margin-top: 6px;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 1.2px;
 }
 
 .hero__divider {
     border: none;
-    border-top: 1px solid #E5E7EB;
-    margin-bottom: 16px;
+    border-top: 2px solid {{ $accentColor }};
+    margin-bottom: 8px;
+}
+
+.hero-meta {
+    font-size: 9px;
+    text-align: left;
+}
+
+.hero-meta__item {
+    padding: 0 0 4px;
+    margin-bottom: 4px;
+    border-bottom: 1px solid #E7ECF2;
+}
+
+.hero-meta__label {
+    margin-bottom: 1px;
+    color: {{ $accentColor }};
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-size: 7.8px;
+}
+
+.hero-meta__value {
+    color: #172033;
+    line-height: 1.28;
 }
 
 .overview-table {
     width: 100%;
-    border-collapse: collapse;
+    border-collapse: separate;
+    border-spacing: 0;
     table-layout: fixed;
 }
 
@@ -104,15 +164,19 @@ body {
 }
 
 .overview__content {
-    width: 58%;
-    padding-right: 20px;
+    width: 49%;
 }
 
 .overview__media {
-    width: 42%;
+    width: 49%;
+}
+
+.overview__gap {
+    width: 2%;
 }
 
 .overview__media,
+.map-image,
 .catalog,
 .footer-flow {
     page-break-inside: avoid;
@@ -121,30 +185,34 @@ body {
 .img-main {
     text-align: center;
     margin-bottom: 0;
-    padding: 10px 10px 0;
-    border: 1px solid #E5E7EB;
+    padding: 7px 8px;
+    border: 1px solid #DDE4EC;
+    border-top: 3px solid {{ $accentColor }};
     background: #FFF;
+    height: 100px;
+    line-height: 86px;
 }
 
 .img-main img {
     max-width: 100%;
-    max-height: 210px;
+    max-height: 80px;
     width: auto;
     height: auto;
-    display: block;
+    display: inline-block;
+    vertical-align: middle;
     margin: 0 auto;
 }
 
 .sec {
-    font-size: 7px;
+    font-size: 8.2px;
     font-weight: bold;
-    color: #9CA3AF;
+    color: {{ $accentColor }};
     text-transform: uppercase;
-    letter-spacing: 1.8px;
-    padding-bottom: 4px;
-    border-bottom: 1px solid #E5E7EB;
-    margin-bottom: 7px;
-    margin-top: 16px;
+    letter-spacing: 1.5px;
+    padding-bottom: 3px;
+    border-bottom: 1px solid #DDE4EC;
+    margin-bottom: 6px;
+    margin-top: 0;
 }
 
 .sec:first-child {
@@ -183,114 +251,100 @@ body {
 }
 
 .desc {
-    font-size: 8.5px;
-    color: #374151;
-    line-height: 1.7;
+    height: 100px;
+    padding: 7px 9px;
+    border: 1px solid #E5EAF0;
+    border-top: 3px solid {{ $accentColor }};
+    background: #FAFBFC;
+    font-size: 9.2px;
+    color: #344054;
+    line-height: 1.35;
 }
 
-.gallery-shell {
-    margin-top: 14px;
-    page-break-inside: avoid;
-}
-
-.gallery {
-    margin-top: 0;
-}
-
-.gallery-table {
+.map-image {
     width: auto;
-    border-collapse: separate;
-    border-spacing: 0 6px;
-    margin-left: 0;
-}
-
-.gallery-table td {
-    padding: 0 6px 0 0;
-    vertical-align: top;
-}
-
-.gallery-table td:last-child {
-    padding-right: 0;
-}
-
-.gallery-thumb {
-    width: 58px;
-    height: 58px;
-    border: 1px solid #DBDADA;
-    background: #FFF;
+    margin-top: 8px;
+    padding: 8px 12px 10px;
+    border: 1px solid #D7DEE6;
+    border-left: 5px solid {{ $accentColor }};
+    background: #F8FAFC;
     text-align: center;
-    vertical-align: middle;
 }
 
-.gallery-thumb img {
-    max-width: 50px;
-    max-height: 50px;
-    width: auto;
-    height: auto;
+.map-image__label {
+    margin-bottom: 5px;
+    color: {{ $accentColor }};
+    font-size: 8.2px;
+    font-weight: bold;
+    letter-spacing: 1.6px;
+    text-align: left;
+    text-transform: uppercase;
+}
+
+.map-image img {
     display: block;
-    margin: 4px auto;
+    width: auto;
+    max-width: 100%;
+    max-height: 332px;
+    height: auto;
+    margin: 0 auto;
 }
 
 .catalog {
-    margin-top: 18px;
-}
-
-.catalog__title {
-    font-size: 7px;
-    font-weight: bold;
-    color: #9CA3AF;
-    text-transform: uppercase;
-    letter-spacing: 1.8px;
-    padding-bottom: 4px;
-    border-bottom: 1px solid #E5E7EB;
-    margin-bottom: 10px;
+    margin-top: 7px;
+    width: 100%;
 }
 
 .catalog__table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 7.8px;
+    font-size: 7.6px;
 }
 
 .catalog__table th,
 .catalog__table td {
-    border: 1px solid #E5E7EB;
-    padding: 6px 5px;
+    border: 1px solid #DDE4EC;
+    padding: 3.5px 3px;
     text-align: center;
     vertical-align: middle;
 }
 
 .catalog__table thead {
-    background: rgba(9, 62, 102, 0.08);
+    background: {{ $accentColor }};
 }
 
 .catalog__table th {
-    color: #111827;
-    font-size: 8px;
+    color: #FFF;
+    font-size: 7.6px;
     font-weight: bold;
-    line-height: 1.25;
+    line-height: 1.15;
+    text-transform: uppercase;
 }
 
 .catalog__table th small {
     display: block;
-    margin-top: 2px;
-    font-size: 7px;
+    margin-top: 1px;
+    font-size: 6.6px;
     font-weight: 400;
-    color: #6B7280;
+    color: rgba(255, 255, 255, 0.82);
 }
 
 .catalog__table td {
-    color: #374151;
-    font-size: 8px;
-    line-height: 1.35;
+    color: #263243;
+    font-size: 7.7px;
+    line-height: 1.2;
+}
+
+.catalog__table tbody tr:nth-child(even) {
+    background: #F8FAFC;
 }
 
 .footer-flow {
-    margin-top: 40px;
-    border-top: 1px solid #E5E7EB;
-    padding-top: 10px;
-    font-size: 8px;
-    color: #9CA3AF;
+    margin-top: 10px;
+    border-top: 1px solid #DDE4EC;
+    padding-top: 5px;
+    font-size: 7px;
+    color: #8A94A6;
     text-align: center;
 }
 </style>
@@ -305,13 +359,6 @@ body {
     $productName = $product->name;
     $familyName = $product->family?->name;
     $subfamilyName = $product->subfamily?->name;
-    $detailRows = collect([
-        ['label' => 'Familia', 'value' => $familyName],
-        ['label' => 'Subcategoría', 'value' => $subfamilyName],
-        ['label' => 'Material', 'value' => $product->material],
-        ['label' => 'Tratamiento', 'value' => $product->treatment],
-        ['label' => 'Observaciones', 'value' => $product->observations],
-    ])->filter(fn ($row) => filled($row['value']))->values();
 
     $columns = $specTable?->columns?->values() ?? collect();
     $specLabelKey = function ($label) {
@@ -436,41 +483,60 @@ body {
             $rowspans[$rowIndex][$columnIndex] = $span;
         }
     }
-
-    $galleryImages = $gallery
-        ->filter(fn ($media) => filled($galleryDataUris[$media->id] ?? null))
-        ->values();
-    $galleryChunks = $galleryImages->chunk(5);
 @endphp
 
 <div class="sheet">
 <div class="hd">
     <div class="hd__l">
         @if($logoPath)
-            <img src="{{ $logoPath }}" alt="Tarea" style="max-height:48px; max-width:180px;">
+            <img src="{{ $logoPath }}" alt="Tarea" style="max-height:40px; max-width:170px;">
         @else
             <div style="font-size:22px; font-weight:900; color:#093E66; letter-spacing:-0.5px;">TAREA</div>
             <div style="font-size:6.5px; font-weight:bold; color:#9CA3AF; letter-spacing:3px; text-transform:uppercase; margin-top:2px;">Soluciones eléctricas e industriales</div>
         @endif
     </div>
     <div class="hd__r">
-        <div style="font-size:16px; font-weight:bold; color:#093E66; letter-spacing:1px; text-transform:uppercase;">Ficha técnica</div>
-        <div style="font-size:7px; font-weight:bold; color:#9CA3AF; text-transform:uppercase; letter-spacing:2px; margin-top:3px;">Información de producto</div>
+        <div class="doc-title">Ficha técnica</div>
+        <div class="doc-subtitle">Especificación de producto</div>
     </div>
 </div>
 
 <div class="hero">
     <div class="hero__l">
-        <div class="hero__brand-label">{{ $familyName ?: 'Producto' }}</div>
+        <div class="hero__brand-label">{{ $subfamilyName ?: ($familyName ?: 'Producto') }}</div>
         <div class="hero__code">{{ $productCode }}</div>
         @if($productName)
             <div class="hero__name">{{ mb_strtoupper($productName) }}</div>
         @endif
     </div>
     <div class="hero__r">
-        @if($subfamilyName)
-            <span style="font-size:11px; font-weight:bold; color:#6B7280; text-transform:uppercase; letter-spacing:1px;">{{ $subfamilyName }}</span>
-        @endif
+        <div class="hero__brand-label" style="color:{{ $accentColor }};">{{ $familyName ?: 'Producto' }}</div>
+        <div class="hero-meta">
+            @if($subfamilyName)
+                <div class="hero-meta__item">
+                    <div class="hero-meta__label">Subcategoría</div>
+                    <div class="hero-meta__value">{{ $subfamilyName }}</div>
+                </div>
+            @endif
+            @if($product->material)
+                <div class="hero-meta__item">
+                    <div class="hero-meta__label">Material</div>
+                    <div class="hero-meta__value">{{ $product->material }}</div>
+                </div>
+            @endif
+            @if($product->treatment)
+                <div class="hero-meta__item">
+                    <div class="hero-meta__label">Tratamiento</div>
+                    <div class="hero-meta__value">{{ $product->treatment }}</div>
+                </div>
+            @endif
+            @if($product->observations)
+                <div class="hero-meta__item">
+                    <div class="hero-meta__label">Observaciones</div>
+                    <div class="hero-meta__value">{{ $product->observations }}</div>
+                </div>
+            @endif
+        </div>
     </div>
 </div>
 <hr class="hero__divider">
@@ -478,24 +544,14 @@ body {
 <table class="overview-table">
     <tr>
         <td class="overview__content">
-            @if($detailRows->isNotEmpty())
-                <div class="sec">Especificaciones</div>
-                <table class="dt">
-                    @foreach($detailRows as $row)
-                        <tr>
-                            <td>{{ $row['label'] }}</td>
-                            <td>{{ $row['value'] }}</td>
-                        </tr>
-                    @endforeach
-                </table>
-            @endif
-
             @if($product->description)
                 <div class="sec">Descripción</div>
                 <div class="desc">{!! nl2br(e($product->description)) !!}</div>
             @endif
         </td>
+        <td class="overview__gap"></td>
         <td class="overview__media">
+            <div class="sec">Producto</div>
             <div class="img-main">
                 @if($mainImageDataUri)
                     <img src="{{ $mainImageDataUri }}" alt="{{ $productName }}">
@@ -505,30 +561,15 @@ body {
     </tr>
 </table>
 
-@if($galleryImages->count() > 1)
-    <div class="gallery-shell">
-        <div class="sec">Galería</div>
-        <div class="gallery">
-            <table class="gallery-table">
-                @foreach($galleryChunks as $chunk)
-                    <tr>
-                        @foreach($chunk as $media)
-                            <td>
-                                <div class="gallery-thumb">
-                                    <img src="{{ $galleryDataUris[$media->id] }}" alt="{{ $media->alt_text ?: $productName }}">
-                                </div>
-                            </td>
-                        @endforeach
-                    </tr>
-                @endforeach
-            </table>
-        </div>
+@if($mapImageDataUri)
+    <div class="map-image">
+        <div class="map-image__label">Plano técnico / dimensiones</div>
+        <img src="{{ $mapImageDataUri }}" alt="{{ $productName }} plano técnico">
     </div>
 @endif
 
 @if($specTable && $columns->isNotEmpty() && $specTable->rows->isNotEmpty())
     <div class="catalog">
-        <div class="catalog__title">Tabla técnica</div>
         <table class="catalog__table">
             <thead>
                 @if($isGroupedSpecsHeader)

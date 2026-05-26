@@ -235,6 +235,7 @@
                             <div class="products-show__actions">
                                 <a href="{{ route('web.products.technical-sheet', [$selectedFamily->slug, $product->slug]) }}" class="products-show__button products-show__button--outline" target="_blank" rel="noopener"><span>Ficha técnica</span></a>
                                 <a href="{{ route('web.quote.show', ['product' => $product->id]) }}" class="products-show__button products-show__button--solid"><span>Consultar</span></a>
+                                <a href="{{ route('web.catalog.show') }}" class="products-show__button products-show__button--outline"><span>Solicitar Catálogo</span></a>
                             </div>
                         </div>
                     </div>

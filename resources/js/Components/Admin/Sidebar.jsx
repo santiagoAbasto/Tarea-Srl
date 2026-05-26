@@ -350,7 +350,7 @@ export default function Sidebar({
         },
         {
             key: "partners",
-            title: "Marcas aliadas",
+            title: "Representadas",
             description: "Marcas y socios comerciales",
             icon: "solar:users-group-two-rounded-outline",
             children: [
