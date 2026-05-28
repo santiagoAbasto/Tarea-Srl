@@ -223,32 +223,6 @@
         </section>
     @endif
 
-    @if($productosHome && $product_families->isNotEmpty())
-        <section class="section section--home-products">
-            <div class="container">
-                <div class="section__header">
-                    <h2 class="section__title">{{ $productosHome->title }}</h2>
-                    @if($productosHome->button_url)
-                        <a href="{{ $productosHome->button_url }}" class="section__button">{{ $productosHome->button_text }}</a>
-                    @endif
-                </div>
-                <div class="cards-3 cards-3--home-products">
-                    @foreach($product_families as $family)
-                        <a href="{{ route('web.products.family', $family->slug) }}" class="product-card product-card--link">
-                            <div class="product-card__media">
-                                <span class="product-card__plus" aria-hidden="true"></span>
-                                <img src="{{ media_asset_url($family->coverMedia) }}" alt="{{ $family->name }}">
-                            </div>
-                            <div class="product-card__body" style="--accent-color: {{ $family->accent_color ?: '#8BCFDE' }};">
-                                <h3 class="product-title">{{ $family->name }}</h3>
-                            </div>
-                        </a>
-                    @endforeach
-                </div>
-            </div>
-        </section>
-    @endif
-
     @if($about)
         <section class="section section--about-preview">
             <div class="container">
@@ -273,6 +247,32 @@
                             <a href="{{ $about->button_url }}">{{ $about->button_text }}</a>
                         @endif
                     </div>
+                </div>
+            </div>
+        </section>
+    @endif
+
+    @if($productosHome && $product_families->isNotEmpty())
+        <section class="section section--home-products">
+            <div class="container">
+                <div class="section__header">
+                    <h2 class="section__title">{{ $productosHome->title }}</h2>
+                    @if($productosHome->button_url)
+                        <a href="{{ $productosHome->button_url }}" class="section__button">{{ $productosHome->button_text }}</a>
+                    @endif
+                </div>
+                <div class="cards-3 cards-3--home-products">
+                    @foreach($product_families as $family)
+                        <a href="{{ route('web.products.family', $family->slug) }}" class="product-card product-card--link">
+                            <div class="product-card__media">
+                                <span class="product-card__plus" aria-hidden="true"></span>
+                                <img src="{{ media_asset_url($family->coverMedia) }}" alt="{{ $family->name }}">
+                            </div>
+                            <div class="product-card__body" style="--accent-color: {{ $family->accent_color ?: '#8BCFDE' }};">
+                                <h3 class="product-title">{{ $family->name }}</h3>
+                            </div>
+                        </a>
+                    @endforeach
                 </div>
             </div>
         </section>

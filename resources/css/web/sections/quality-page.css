@@ -94,14 +94,17 @@
 }
 
 .quality-page__logos-block {
-    margin-top: 42px;
+    margin-top: 32px;
+    text-align: center;
 }
 
 .quality-page__logos {
     display: flex;
     flex-wrap: wrap;
     gap: 16px;
-    margin-top: 20px;
+    justify-content: center;
+    align-items: center;
+    margin-top: 0;
 }
 
 .quality-page__logo-item {

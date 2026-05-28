@@ -163,19 +163,6 @@
                         @endif
                     </div>
 
-                    <div class="quality-page__logos-block">
-                        <h2 class="quality-page__title">{{ $logos?->title ?? 'Logos de calidad' }}</h2>
-
-                        @if($logoItems->isNotEmpty())
-                            <div class="quality-page__logos">
-                                @foreach($logoItems as $item)
-                                    <article class="quality-page__logo-item">
-                                        <img src="{{ media_asset_url($item->media) }}" alt="{{ $item->title ?? 'Logo de calidad' }}">
-                                    </article>
-                                @endforeach
-                            </div>
-                        @endif
-                    </div>
                 </div>
 
                 @if($policyImage || $policyVideo || $policyYoutubeEmbed)
@@ -196,6 +183,18 @@
                         @elseif($policyImage)
                             <img src="{{ $policyImage }}" alt="{{ $policy?->title ?? 'Políticas de calidad' }}">
                         @endif
+                    </div>
+                @endif
+
+                @if($logoItems->isNotEmpty())
+                    <div class="quality-page__logos-block">
+                        <div class="quality-page__logos">
+                            @foreach($logoItems as $item)
+                                <article class="quality-page__logo-item">
+                                    <img src="{{ media_asset_url($item->media) }}" alt="{{ $item->title ?? 'Logo de calidad' }}">
+                                </article>
+                            @endforeach
+                        </div>
                     </div>
                 @endif
             </div>
