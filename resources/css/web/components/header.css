@@ -1,12 +1,13 @@
 .site-header {
-    position: absolute;
+    position: fixed;
     inset: 0 0 auto 0;
-    z-index: 3;
+    z-index: 100;
     padding: 0;
     color: #fff;
-    background: transparent;
-    box-shadow: none;
+    background: rgba(255, 255, 255, 0.02);
+    box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.05);
     height: 90px;
+    transition: background 0.3s ease, box-shadow 0.3s ease;
 }
 
 .site-header__inner {
@@ -137,7 +138,6 @@
 .site-header--scrolled {
     background: #093E66 !important;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.18);
-    transition: background 0.3s ease, box-shadow 0.3s ease;
 }
 
 /* ================================================================

@@ -158,15 +158,22 @@
 
 .products-catalog-page {
     background: #FFF;
+    padding-top: 90px;
 }
 
 .site-header--catalog {
-    position: relative;
-    inset: auto;
+    position: fixed;
+    inset: 0 0 auto 0;
+    z-index: 100;
     width: 100%;
     height: 90px;
     background: #FFF;
     box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.05);
+}
+
+.site-header--catalog.site-header--scrolled {
+    background: #FFF !important;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.10);
 }
 
 .site-header--catalog .site-header__inner {
@@ -1368,6 +1375,10 @@
         color: #1A181C;
     }
 
+    .products-catalog-page {
+        padding-top: 74px;
+    }
+
     .site-header--catalog .site-header__inner {
         height: 74px;
         min-height: 74px;
@@ -1654,6 +1665,10 @@
 @media (max-width: 768px) {
     .site-header--catalog {
         height: 70px;
+    }
+
+    .products-catalog-page {
+        padding-top: 70px;
     }
 
     .site-header--catalog .site-header__inner {

@@ -1,5 +1,6 @@
 .search-page {
     background: #FFF;
+    padding-top: 90px;
 }
 
 .search-page__crumbs {
@@ -180,6 +181,10 @@
 }
 
 @media (max-width: 900px) {
+    .search-page {
+        padding-top: 74px;
+    }
+
     .search-page__content {
         padding: 40px 0 96px;
     }
@@ -190,6 +195,10 @@
 }
 
 @media (max-width: 768px) {
+    .search-page {
+        padding-top: 70px;
+    }
+
     .search-page__content {
         padding: 32px 0 72px;
     }

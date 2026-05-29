@@ -420,13 +420,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
     /* =============================================
        HEADER SCROLL — fondo sólido al desplazarse
-       Solo activo cuando el header es fixed (≤1024px)
-       para no afectar el comportamiento desktop.
+       Activo en todos los tamaños porque el header acompaña el scroll.
     ============================================= */
 
     if (nav) {
         const updateHeaderBg = () => {
-            if (window.innerWidth <= 1024 && window.scrollY > 20) {
+            if (window.scrollY > 20) {
                 nav.classList.add("site-header--scrolled");
             } else {
                 nav.classList.remove("site-header--scrolled");

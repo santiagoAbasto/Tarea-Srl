@@ -17,12 +17,12 @@
 }
 
 .news-page-hero .site-header {
-    background: transparent;
-    box-shadow: none;
+    background: rgba(255, 255, 255, 0.02);
+    box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.05);
 }
 
 .news-page-hero .site-header.site-header--scrolled {
-    background: #093e66;
+    background: #093E66;
     box-shadow: 0 10px 30px rgba(5, 24, 43, 0.22);
 }
 
