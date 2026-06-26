@@ -109,15 +109,9 @@ class CatalogController extends Controller
 
     protected function resolveCatalogNotificationRecipients()
     {
-        $footer = FooterSetting::query()->first();
-
         return collect([
             cms_email(config('mail.catalog_request.to')),
             cms_email(config('mail.catalog_request.cc')),
-            cms_email(config('mail.quote_request.to')),
-            cms_email(config('mail.quote_request.cc')),
-            cms_email($footer?->email_primary),
-            cms_email($footer?->email_secondary),
         ])->filter()->unique()->values();
     }
 }

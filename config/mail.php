@@ -121,8 +121,8 @@ return [
     ],
 
     'catalog_request' => [
-        'to' => env('CATALOG_REQUEST_TO_EMAIL', env('QUOTE_REQUEST_TO_EMAIL')),
-        'cc' => env('CATALOG_REQUEST_CC_EMAIL', env('QUOTE_REQUEST_CC_EMAIL')),
+        'to' => env('CATALOG_REQUEST_TO_EMAIL'),
+        'cc' => env('CATALOG_REQUEST_CC_EMAIL'),
     ],
 
     'contact_request' => [

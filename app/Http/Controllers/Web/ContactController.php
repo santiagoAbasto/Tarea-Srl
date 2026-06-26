@@ -103,16 +103,9 @@ class ContactController extends Controller
 
     protected function resolveContactNotificationRecipients()
     {
-        $footer = FooterSetting::query()->first();
-        $settings = ContactPageSetting::query()->first();
-
         return collect([
             cms_email(config('mail.contact_request.to')),
             cms_email(config('mail.contact_request.cc')),
-            cms_email($settings?->email_primary),
-            cms_email($settings?->email_secondary),
-            cms_email($footer?->email_primary),
-            cms_email($footer?->email_secondary),
         ])->filter()->unique()->values();
     }
 }
