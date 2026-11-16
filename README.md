@@ -18,17 +18,17 @@
 
 <img src="docs/readme/divider.svg" alt="" width="100%">
 
-## 📑 Contenido
+## <img src="docs/readme/ic-indice.svg" width="24" height="24" alt=""> Contenido
 
 - [El problema](#-el-problema)
 - [La solución](#-la-solución)
 - [Funcionalidades](#-funcionalidades)
-- [Arquitectura](#️-arquitectura)
+- [Arquitectura](#-arquitectura)
 - [Flujos de trabajo](#-flujos-de-trabajo)
-- [Modelo de datos](#️-modelo-de-datos)
+- [Modelo de datos](#-modelo-de-datos)
 - [Criterios y decisiones](#-criterios-y-decisiones)
 - [Stack](#-stack)
-- [Estructura del repo](#️-estructura-del-repo)
+- [Estructura del repo](#-estructura-del-repo)
 - [Puesta en marcha](#-puesta-en-marcha)
 - [Pruebas y calidad](#-pruebas-y-calidad)
 - [Despliegue](#-despliegue)
@@ -37,11 +37,11 @@
 
 <img src="docs/readme/divider.svg" alt="" width="100%">
 
-## 🧩 El problema
+## <img src="docs/readme/ic-problema.svg" width="24" height="24" alt=""> El problema
 
 Una empresa industrial que vende a otras empresas necesita que su catálogo técnico sea consultable por familia, subfamilia y ficha, y que cada pedido de presupuesto llegue completo y con registro. Cuando el catálogo vive en archivos sueltos y las consultas llegan por correo, las fichas quedan desactualizadas y los pedidos se pierden o se repiten.
 
-## 💡 La solución
+## <img src="docs/readme/ic-solucion.svg" width="24" height="24" alt=""> La solución
 
 Tarea SRL es un sitio público con catálogo jerárquico, fichas en PDF y solicitudes de presupuesto, respaldado por un panel administrativo que edita el contenido sin tocar código. Las consultas quedan guardadas, con sus ítems y adjuntos, y notifican por correo.
 
@@ -50,7 +50,7 @@ Roles que usa el sistema:
 - **Visitante**: explora el catálogo, descarga fichas, pide presupuesto, catálogo o contacto y se suscribe al boletín.
 - **Administrador**: usuario con acceso concedido (`can_access_admin`) que gestiona catálogo, contenido, medios, solicitudes, newsletter y usuarios.
 
-## ✨ Funcionalidades
+## <img src="docs/readme/ic-funcionalidades.svg" width="24" height="24" alt=""> Funcionalidades
 
 **Sitio público**
 - Inicio, información institucional, calidad, clientes, representadas, novedades y contacto.
@@ -68,7 +68,7 @@ Roles que usa el sistema:
 - Campañas de newsletter a suscriptores activos.
 - Dashboard con conteos, series de solicitudes y actividad reciente.
 
-## 🏗️ Arquitectura
+## <img src="docs/readme/ic-arquitectura.svg" width="24" height="24" alt=""> Arquitectura
 
 <p align="center">
   <img src="docs/readme/flujo.svg" alt="Cómo se procesa una consulta: límites, honeypot, persistencia y correo" width="100%">
@@ -93,7 +93,7 @@ flowchart TB
     F --> X["Correo<br/>SMTP · Mailables"]
 ```
 
-## 🔄 Flujos de trabajo
+## <img src="docs/readme/ic-flujos.svg" width="24" height="24" alt=""> Flujos de trabajo
 
 **Solicitud de presupuesto**
 
@@ -126,7 +126,7 @@ flowchart LR
     T -. "error" .-> RB["Rollback<br/>sin cambios parciales"]
 ```
 
-## 🗃️ Modelo de datos
+## <img src="docs/readme/ic-datos.svg" width="24" height="24" alt=""> Modelo de datos
 
 ```mermaid
 erDiagram
@@ -146,7 +146,7 @@ erDiagram
 
 Las migraciones (27) definen claves foráneas con cascada o `NULL` según el ciclo de vida, slugs y correos únicos, y tablas pivote con restricciones compuestas. Las entidades principales están en `app/Models/`.
 
-## 🧭 Criterios y decisiones
+## <img src="docs/readme/ic-criterios.svg" width="24" height="24" alt=""> Criterios y decisiones
 
 | Decisión | Por qué |
 |---|---|
@@ -158,7 +158,7 @@ Las migraciones (27) definen claves foráneas con cascada o `NULL` según el cic
 | IP guardada como huella HMAC en los registros | Permite detectar abuso sin almacenar la dirección en claro. |
 | Acceso al panel con `can_access_admin` | El permiso vive en el usuario, no en una lista de correos fija en el código (la lista queda solo como respaldo de esquemas anteriores). |
 
-## 🧱 Stack
+## <img src="docs/readme/ic-stack.svg" width="24" height="24" alt=""> Stack
 
 | Capa | Tecnología | Versión (composer.json / package.json) |
 |---|---|---|
@@ -172,7 +172,7 @@ Las migraciones (27) definen claves foráneas con cascada o `NULL` según el cic
 | Pruebas | PHPUnit | ^11.5 |
 | Base de datos | MySQL recomendado (SQLite en pruebas) | según el entorno |
 
-## 🗂️ Estructura del repo
+## <img src="docs/readme/ic-estructura.svg" width="24" height="24" alt=""> Estructura del repo
 
 ```text
 app/
@@ -194,7 +194,7 @@ public/                 entrada web y assets
 docs/readme/            assets de este README (SVG)
 ```
 
-## 🚀 Puesta en marcha
+## <img src="docs/readme/ic-arranque.svg" width="24" height="24" alt=""> Puesta en marcha
 
 Requisitos: **PHP 8.2 o superior**, **Composer**, **Node.js con npm** y una base de datos compatible con Laravel (MySQL es la configuración principal).
 
@@ -213,25 +213,25 @@ También existe `composer run dev`, que levanta servidor, cola, logs y Vite junt
 
 Variables de entorno: se completan en `.env` a partir de `.env.example` con valores locales (conexión a la base de datos, correo y opciones de seguridad). No reutilizar credenciales de otros entornos.
 
-## 🧪 Pruebas y calidad
+## <img src="docs/readme/ic-pruebas.svg" width="24" height="24" alt=""> Pruebas y calidad
 
 - PHPUnit con suites `Unit` y `Feature`; las pruebas usan SQLite en memoria, caché en array, correo falso y cola síncrona.
 - Pruebas presentes (8 métodos de prueba en total): descarga de medios, carruseles de inicio, nosotros y clientes, y contenido de productos y representadas. No hay pruebas E2E ni de carga versionadas.
 - Comandos: `composer test` (limpia caché y ejecuta la suite), `npm run build`, `./vendor/bin/pint` para formato.
 - No hay análisis estático ni CI versionados en el repositorio.
 
-## 🚢 Despliegue
+## <img src="docs/readme/ic-despliegue.svg" width="24" height="24" alt=""> Despliegue
 
 No documentado en el repositorio: no hay Dockerfile, pipeline de CI/CD, configuración de Nginx ni infraestructura como código. Respaldos y supervisión del proceso se resuelven en el entorno de alojamiento.
 
-## 📌 Estado y pendientes
+## <img src="docs/readme/ic-estado.svg" width="24" height="24" alt=""> Estado y pendientes
 
 - **Estado:** en uso, con historial de versiones hasta la serie 1.1.x.
 - **Último commit:** 26 de junio de 2026, `VERSION 1.1.7`.
 - **Producción:** no verificado desde el repositorio.
 - **Pendientes sugeridos:** ampliar la cobertura de pruebas al flujo de solicitudes y a la importación de catálogo; agregar CI y una definición de despliegue versionada.
 
-## 📄 Licencia y autoría
+## <img src="docs/readme/ic-licencia.svg" width="24" height="24" alt=""> Licencia y autoría
 
 Desarrollado por el **Ing. Santiago Abasto**.
 
